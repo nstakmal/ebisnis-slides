@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis</title>
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight { border-top: 4px solid var(--primary); }
+    .card.warning { border-top: 4px solid var(--accent); }
+    .card.danger { border-top: 4px solid var(--danger); }
+    .card.success { border-top: 4px solid var(--success); }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 18px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .cover-slide {
+      background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .cover-slide .subtitle {
+      font-size: 19px;
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    .controller {
+      height: 60px;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .notes-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e2e8f0;
+      padding: 16px 30px;
+      font-size: 13px;
+      border-radius: 0 0 16px 16px;
+      border-top: 3px solid var(--accent);
+      display: none;
+      line-height: 1.6;
+    }
+    .notes-drawer.open {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Fakultas Ilmu Komputer</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 06:<br>Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis</h1>
+      <p class="subtitle">Mengidentifikasi Kerentanan Operasional, Analisis Matriks Risiko, Strategi Mitigasi, dan Membangun Sistem Digital yang Tahan Banting.</p>
+      <div style="font-size: 16px; color: #f8fafc; margin-top: 18px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">
+        Program Studi Sistem Informasi — Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.12); border-left-color: var(--accent); color: #f8fafc; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau klik tombol di bawah untuk berpindah slide.</em>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Apersepsi & Fakta Industri -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi & Fakta Industri</span>
+          <h2 class="slide-title">Mengapa 70% Transformasi E-Bisnis Mengalami Kegagalan?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title"><span class="card-icon">💥</span> Fakta Pahit Transformasi Digital</div>
+            <ul class="bullet-list">
+              <li>Riset McKinsey & Boston Consulting Group (BCG) menunjukkan <strong>70% proyek digitalisasi bisnis gagal</strong> mencapai target keuntungan yang dijanjikan.</li>
+              <li>Banyak perusahaan mengeluarkan modal miliaran untuk bikin aplikasi dan web, namun akhirnya sepi pengguna dan ditinggalkan dalam 1 tahun.</li>
+              <li><strong>Penyebab Utama Bukan Masalah Komputer/Koding</strong>, melainkan ketidaksiapan proses bisnis, resistensi budaya kerja SDM, dan minimnya manajemen risiko.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">⚖️</span> 3 Jebakan Ilusi Digital</div>
+            <ul class="bullet-list">
+              <li><strong>1. "Build It and They Will Come":</strong> Mengira asal sudah punya web, pembeli otomatis akan datang berbondong-bondong.</li>
+              <li><strong>2. Mengabaikan Risiko Fraud:</strong> Terkejut saat ribuan pesanan masuk ternyata menggunakan kartu kredit curian (*Carding*).</li>
+              <li><strong>3. Kerapuhan Operasional (Fragility):</strong> Sistem gudang fisik tidak siap saat ada 10.000 paket harus dikirim dalam sehari.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Pertanyaan ke Mahasiswa:</strong> "Menurut kalian, lebih bahaya mana bagi toko online: web tidak ada pengunjung sama sekali, atau web diserbu 1 juta pengunjung tapi server langsung crash dan data bocor?"
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Analisis Manfaat -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Analisis Manfaat</span>
+          <h2 class="slide-title">Kelebihan Strategis E-Bisnis bagi Pelaku Usaha</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-4">
+          <div class="card highlight">
+            <div class="card-title">1. Operasional 24/7</div>
+            <p style="font-size: 13px; color: #475569;">
+              Toko fisik tutup jam 9 malam. Toko online terus menerima pesanan dan memproses uang masuk saat pemiliknya sedang tidur lelap.
+            </p>
+          </div>
+          <div class="card success">
+            <div class="card-title">2. Jangkauan Global</div>
+            <p style="font-size: 13px; color: #475569;">
+              Pengrajin kain tenun atau keripik di Kisaran bisa menjual produk langsung ke konsumen di Jakarta, Surabaya, bahkan Malaysia dan diaspora dunia.
+            </p>
+          </div>
+          <div class="card warning">
+            <div class="card-title">3. Efisiensi Biaya</div>
+            <p style="font-size: 13px; color: #475569;">
+              Menghilangkan biaya sewa ruko fisik tahunan yang mahal, biaya etalase kaca, dan meminimalkan kebutuhan staf pramuniaga toko.
+            </p>
+          </div>
+          <div class="card blue" style="border-top: 4px solid #6366f1;">
+            <div class="card-title">4. Presisi Data</div>
+            <p style="font-size: 13px; color: #475569;">
+              Mengetahui secara tepat: produk apa yang paling lama dilihat, jam berapa pembeli ramai, dan dari kota mana pesanan terbanyak berasal.
+            </p>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 20px;">
+          <strong>Insight Dosen:</strong> Kelebihan terbesar e-bisnis bukan cuma soal "jualan online", melainkan <em>visibilitas data analitik</em> yang membuat keputusan bisnis didasarkan pada fakta angka, bukan sekadar firasat (*gut feeling*).
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Tantangan Nyata -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Tantangan Nyata</span>
+          <h2 class="slide-title">Hambatan Adopsi E-Bisnis di Indonesia</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card warning">
+            <div class="card-title">1. Kesenjangan Digital</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 8px;">(Digital Divide)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Koneksi fiber optik super cepat baru terpusat di kota besar Jawa & ibukota provinsi.</li>
+              <li>Biaya kuota internet dan sinyal tidak stabil di pelosok daerah masih menjadi kendala operasional harian.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <div class="card-title">2. Ketiadaan Kepercayaan</div>
+            <p style="font-size: 12px; color: var(--danger); font-weight: bold; margin-bottom: 8px;">(Trust Deficit & Fraud)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Tingginya kasus penipuan online (barang tidak dikirim, barang datang tidak sesuai foto deskripsi).</li>
+              <li>Konsumen daerah masih merasa cemas uangnya hilang jika transfer uang sebelum barang tiba di tangan.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">3. Resistensi Budaya SDM</div>
+            <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 8px;">(Cultural Inertia)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Karyawan senior menolak meninggalkan pembukuan buku tulis nota manual karena menganggap sistem digital ribet.</li>
+              <li>Kurangnya talenta terampil di bidang keamanan siber dan pemeliharaan server database.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 20px;">
+          <strong>Refleksi Mahasiswa SI:</strong> Masalah terbesar implementasi sistem informasi di perusahaan sering kali bukan <em>Software Bug</em>, melainkan <strong>penolakan manusia</strong> terhadap perubahan cara kerja baru!
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Taksonomi Risiko -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Taksonomi Risiko</span>
+          <h2 class="slide-title">4 Pilar Kategori Risiko dalam E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title"><span class="card-icon">💸</span> 1. Risiko Finansial</div>
+            <ul class="bullet-list">
+              <li><strong>Fraud Kartu Kredit:</strong> Pencuri memakai identitas orang lain untuk borong barang mahal.</li>
+              <li><strong>Chargeback Penalty:</strong> Bank menarik kembali dana dari merchant plus denda admin.</li>
+              <li><strong>Retur Paket Fiktif (COD Fraud):</strong> Pembeli iseng menolak membayar saat kurir datang.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">⚙️</span> 2. Risiko Operasional & Teknis</div>
+            <ul class="bullet-list">
+              <li><strong>Server Downtime:</strong> Server mati total saat puncak belanja tanggal kembar.</li>
+              <li><strong>Single Point of Failure (SPOF):</strong> Bergantung hanya pada 1 penyedia hosting/kurir.</li>
+              <li><strong>Human Error:</strong> Salah input harga Rp 1.000.000 tertulis Rp 1.000 (salah ketik diskon).</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🔓</span> 3. Risiko Keamanan Data & Hukum</div>
+            <ul class="bullet-list">
+              <li><strong>Serangan Ransomware:</strong> Database toko disandera dan dienkripsi oleh hacker.</li>
+              <li><strong>Kebocoran Data Pengguna:</strong> Data KTP dan No HP pembeli bocor ke forum gelap.</li>
+              <li><strong>Pelanggaran Regulasi:</strong> Terancam sanksi UU PDP No. 27/2022 hingga Rp 6 Miliar.</li>
+            </ul>
+          </div>
+          <div class="card" style="border-top: 4px solid #a855f7;">
+            <div class="card-title"><span class="card-icon">📢</span> 4. Risiko Reputasi & Brand</div>
+            <ul class="bullet-list">
+              <li><strong>Viral Komplain Medsos:</strong> Ulasan buruk pembeli yang kecewa menyebar cepat di TikTok/X.</li>
+              <li><strong>Serangan Bintang 1 Fiktif:</strong> Kampanye ulasan negatif bayaran dari kompetitor jahat.</li>
+              <li><strong>Hilangnya Kepercayaan Mitra:</strong> Bank atau Payment Gateway memutuskan kerja sama.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Metodologi Analisis -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Metodologi Analisis</span>
+          <h2 class="slide-title">Matriks Evaluasi Risiko (Risk Assessment Matrix)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+              Memetakan risiko berdasarkan <strong>Probabilitas Kejadian (Likelihood)</strong> vs <strong>Tingkat Dampak Finansial (Impact)</strong>:
+            </p>
+            <!-- SVG Heatmap 3x3 -->
+            <svg width="100%" height="250" viewBox="0 0 400 250">
+              <!-- Y Axis Label -->
+              <text x="15" y="130" font-size="12" font-weight="bold" fill="#0f172a" transform="rotate(-90 15,130)" text-anchor="middle">DAMPAK (IMPACT) &rarr;</text>
+              <!-- X Axis Label -->
+              <text x="230" y="240" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">KEMUNGKINAN TERJADI (LIKELIHOOD) &rarr;</text>
+
+              <!-- Row 3: High Impact -->
+              <rect x="70" y="20" width="100" height="60" fill="#fef08a" stroke="#ca8a04"/>
+              <text x="120" y="55" font-size="11" font-weight="bold" fill="#854d0e" text-anchor="middle">SEDANG</text>
+              <rect x="175" y="20" width="100" height="60" fill="#fecaca" stroke="#dc2626"/>
+              <text x="225" y="55" font-size="11" font-weight="bold" fill="#991b1b" text-anchor="middle">TINGGI</text>
+              <rect x="280" y="20" width="100" height="60" fill="#ef4444" stroke="#991b1b"/>
+              <text x="330" y="50" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">KRITIS!</text>
+              <text x="330" y="65" font-size="9" fill="#ffffff" text-anchor="middle">(Kebocoran Data)</text>
+
+              <!-- Row 2: Medium Impact -->
+              <rect x="70" y="85" width="100" height="60" fill="#bbf7d0" stroke="#16a34a"/>
+              <text x="120" y="120" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">RENDAH</text>
+              <rect x="175" y="85" width="100" height="60" fill="#fef08a" stroke="#ca8a04"/>
+              <text x="225" y="115" font-size="11" font-weight="bold" fill="#854d0e" text-anchor="middle">SEDANG</text>
+              <text x="225" y="130" font-size="9" fill="#854d0e" text-anchor="middle">(Server Lambat)</text>
+              <rect x="280" y="85" width="100" height="60" fill="#fecaca" stroke="#dc2626"/>
+              <text x="330" y="120" font-size="11" font-weight="bold" fill="#991b1b" text-anchor="middle">TINGGI</text>
+
+              <!-- Row 1: Low Impact -->
+              <rect x="70" y="150" width="100" height="60" fill="#bbf7d0" stroke="#16a34a"/>
+              <text x="120" y="180" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">RENDAH</text>
+              <text x="120" y="195" font-size="9" fill="#166534" text-anchor="middle">(Salah Ketik Teks)</text>
+              <rect x="70" y="150" width="100" height="60" fill="#bbf7d0" stroke="#16a34a"/>
+              <rect x="175" y="150" width="100" height="60" fill="#bbf7d0" stroke="#16a34a"/>
+              <text x="225" y="185" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">RENDAH</text>
+              <rect x="280" y="150" width="100" height="60" fill="#fef08a" stroke="#ca8a04"/>
+              <text x="330" y="185" font-size="11" font-weight="bold" fill="#854d0e" text-anchor="middle">SEDANG</text>
+            </svg>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">Prioritas Tindakan Manajemen</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong style="color: #dc2626;">Zona Merah (Kritis):</strong> Risiko yang WAJIB dimitigasi segera. Contoh: enkripsi database pelanggan, backup berkala, dan verifikasi OTP.</li>
+              <li><strong style="color: #ca8a04;">Zona Kuning (Sedang):</strong> Risiko yang dipantau ketat secara periodik. Contoh: kapasitas RAM server menjelang promo bulanan.</li>
+              <li><strong style="color: #16a34a;">Zona Hijau (Rendah):</strong> Risiko minor yang bisa diterima bisnis (*Accepted Risk*). Contoh: kesalahan tata bahasa di artikel blog.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Bedah Finansial -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Bedah Finansial</span>
+          <h2 class="slide-title">Bahaya Nyata Chargeback & Friendly Fraud</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title"><span class="card-icon">💳</span> Apa Itu Chargeback Fraud?</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Skenario penipuan belanja yang paling ditakuti toko online:
+            </p>
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px; font-size: 12px; line-height: 1.6;">
+              1. Pelaku membeli laptop Rp 15 Juta menggunakan kartu kredit di toko Anda.<br>
+              2. Toko Anda memverifikasi pesanan dan mengirim laptop via kurir.<br>
+              3. Setelah laptop diterima, pelaku melapor ke bank penerbit kartu: <em>"Kartu saya dicuri orang, saya tidak pernah beli laptop ini!"</em><br>
+              4. Bank langsung menarik paksa dana Rp 15 Juta dari rekening toko Anda!
+            </div>
+            <p style="font-size: 13px; color: #991b1b; font-weight: bold; margin-top: 10px;">
+              Hasil: Toko Anda rugi 2x lipat (Laptop lenyap + Uang penjualan ditarik bank + Kena denda biaya sengketa).
+            </p>
+          </div>
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">🛡️</span> Cara Mengatasinya (Mitigasi)</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Aktifkan 3D Secure 2.0 (OTP):</strong> Jika transaksi diverifikasi OTP SMS ke nomor HP asli pemilik kartu, kewajiban ganti rugi (*Liability Shift*) pindah ke pihak bank, bukan tanggungan toko Anda!</li>
+              <li><strong>Simpan Bukti Pengiriman (POD):</strong> Resi bertandatangan dan foto serah terima barang dari kurir ekspedisi.</li>
+              <li><strong>Deteksi Geolocation IP:</strong> Blokir otomatis jika nomor kartu bank terbitan Jakarta tapi order dilakukan dari IP luar negeri mencurigakan.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Arsitektur Teknis -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Arsitektur Teknis</span>
+          <h2 class="slide-title">Mengeliminasi Single Point of Failure (SPOF)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: var(--danger);"><span class="card-icon">❌</span> Arsitektur Rentan (Ada SPOF)</div>
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; text-align: center;">
+              <p style="font-size: 12px; color: #475569;">Domain Toko &rarr; <strong>1 Unit Web Server Fisik</strong> &rarr; 1 Database</p>
+              <div style="background: #fee2e2; color: #991b1b; padding: 6px; border-radius: 6px; font-weight: bold; margin-top: 8px; font-size: 12px;">
+                Jika kabel power server putus / harddisk rusak = BISNIS MATI TOTAL!
+              </div>
+            </div>
+            <ul class="bullet-list" style="margin-top: 12px; font-size: 13px;">
+              <li>Tidak ada cadangan (*No redundancy*).</li>
+              <li>Jika kurir langganan mogok, pengiriman terhenti 100%.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);"><span class="card-icon">✅</span> Arsitektur Andal (High Resilience)</div>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px; text-align: center;">
+              <p style="font-size: 12px; color: #166534;">Load Balancer &rarr; <strong>Multi-Cluster Server Cloud</strong> &rarr; Replikasi DB</p>
+              <div style="background: #dcfce7; color: #166534; padding: 6px; border-radius: 6px; font-weight: bold; margin-top: 8px; font-size: 12px;">
+                Jika Server A rusak, Server B & C otomatis mengambil alih tanpa kedip!
+              </div>
+            </div>
+            <ul class="bullet-list" style="margin-top: 12px; font-size: 13px;">
+              <li><strong>Failover Otomatis:</strong> Pengguna tidak merasakan ada server yang mati.</li>
+              <li><strong>Multi-Courier API:</strong> Jika JNE kendala, sistem otomatis alihkan ke SiCepat/J&T.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Strategi Penanggulangan -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Strategi Penanggulangan</span>
+          <h2 class="slide-title">Strategi Mitigasi Terstruktur: Teknis, Bisnis & Legal</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Mitigasi Teknis</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Aturan Backup 3-2-1:</strong> 3 salinan data, disimpan di 2 media berbeda, 1 salinan disimpan di lokasi offsite terpisah.</li>
+              <li><strong>Disaster Recovery Plan (DRP):</strong> Prosedur tertulis pemulihan sistem jika data center kebakaran/banjir.</li>
+              <li><strong>WAF & Anti-DDoS:</strong> Menyaring bot jahat secara otomatis di Cloudflare.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Mitigasi Bisnis</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Service Level Agreement (SLA):</strong> Kontrak resmi dengan hosting dan kurir minimal 99.9% uptime dengan garansi ganti rugi.</li>
+              <li><strong>Asuransi Logistik:</strong> Mengasuransikan barang bernilai di atas Rp 1 Juta dari risiko hilang di jalan.</li>
+              <li><strong>Standar SOP Packing:</strong> Bubble wrap tebal dan segel anti-rusak untuk menghindari komplain barang pecah.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title">3. Mitigasi Legal</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Syarat & Ketentuan (Terms of Service) Tegas:</strong> Membatasi tanggung jawab hukum jika pembeli salah memasukkan alamat.</li>
+              <li><strong>Kebijakan Retur Jelas:</strong> Wajib melampirkan video *unboxing* tanpa jeda untuk klaim retur barang.</li>
+              <li><strong>Kepatuhan UU PDP No. 27/2022:</strong> Surat izin persetujuan pemrosesan data pribadi konsumen.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Metode Analisis -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Metode Analisis</span>
+          <h2 class="slide-title">Fishbone Diagram: Mengapa Pembeli Kabur Saat Checkout?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        
+        <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+          Analisis sebab-akibat (Ishikawa Diagram) fenomena <em>Cart Abandonment</em> (Keranjang Ditinggal Tanpa Dibayar):
+        </p>
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 18px;">
+          <svg width="100%" height="220" viewBox="0 0 850 220">
+            <!-- Main Spine -->
+            <line x1="50" y1="110" x2="680" y2="110" stroke="#0f172a" stroke-width="4"/>
+            <polygon points="680,95 720,110 680,125" fill="#ef4444"/>
+            <rect x="725" y="80" width="115" height="60" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="782" y="105" font-size="12" font-weight="bold" fill="#991b1b" text-anchor="middle">PEMBELI KABUR</text>
+            <text x="782" y="125" font-size="10" fill="#991b1b" text-anchor="middle">(Batal Checkout)</text>
+
+            <!-- Branch: MACHINE (SISTEM) -->
+            <line x1="200" y1="110" x2="140" y2="30" stroke="#3b82f6" stroke-width="3"/>
+            <rect x="70" y="15" width="140" height="26" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+            <text x="140" y="32" font-size="10" font-weight="bold" fill="#1e40af" text-anchor="middle">SISTEM / MESIN</text>
+            <text x="180" y="65" font-size="10" fill="#475569">• Loading Web > 5 Detik</text>
+            <text x="180" y="80" font-size="10" fill="#475569">• Server Error saat Bayar</text>
+
+            <!-- Branch: METHOD (METODE) -->
+            <line x1="400" y1="110" x2="340" y2="30" stroke="#10b981" stroke-width="3"/>
+            <rect x="270" y="15" width="140" height="26" rx="4" fill="#f0fdf4" stroke="#10b981"/>
+            <text x="340" y="32" font-size="10" font-weight="bold" fill="#166534" text-anchor="middle">METODE PEMBAYARAN</text>
+            <text x="380" y="65" font-size="10" fill="#475569">• Tidak Ada Pilihan QRIS</text>
+            <text x="380" y="80" font-size="10" fill="#475569">• Form Daftar Akun Berbelit</text>
+
+            <!-- Branch: MAN (MANUSIA) -->
+            <line x1="250" y1="110" x2="310" y2="190" stroke="#f59e0b" stroke-width="3"/>
+            <rect x="240" y="185" width="140" height="26" rx="4" fill="#fffbeb" stroke="#f59e0b"/>
+            <text x="310" y="202" font-size="10" font-weight="bold" fill="#92400e" text-anchor="middle">KEBIASAAN USER</text>
+            <text x="210" y="145" font-size="10" fill="#475569">• Iseng Cek Total Ongkir</text>
+            <text x="210" y="160" font-size="10" fill="#475569">• Menunggu Tanggal Gajian</text>
+
+            <!-- Branch: MATERIAL (BIAYA) -->
+            <line x1="450" y1="110" x2="510" y2="190" stroke="#8b5cf6" stroke-width="3"/>
+            <rect x="440" y="185" width="140" height="26" rx="4" fill="#faf5ff" stroke="#8b5cf6"/>
+            <text x="510" y="202" font-size="10" font-weight="bold" fill="#6b21a8" text-anchor="middle">BIAYA PRODUK</text>
+            <text x="410" y="145" font-size="10" fill="#475569">• Ongkir Lebih Mahal dari Barang</text>
+            <text x="410" y="160" font-size="10" fill="#475569">• Ada Biaya Admin Tersembunyi</text>
+          </svg>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Studi Kasus Kelas -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Studi Kasus Kelas</span>
+          <h2 class="slide-title">Diskusi Kelompok: Analisis Risiko Toko Online Lokal</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="card" style="background: #f8fafc; border: 2px dashed #94a3b8; padding: 22px;">
+          <h3 style="color: var(--primary); font-size: 17px; margin-bottom: 8px;">
+            📌 Kasus Nyata: Toko Busana Muslim "Berkah Rahmat" Kisaran
+          </h3>
+          <p style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 14px;">
+            Pemilik toko busana memutuskan menutup ruko fisiknya dan 100% pindah ke website toko online mandiri. Menjelang musim lebaran Idul Fitri, mereka menargetkan penjualan 5.000 baju gamis dalam 2 minggu.
+          </p>
+          <div class="grid-3">
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok A (Risiko Finansial):</strong><br>
+              Apa bahayanya jika mereka mengandalkan COD 100% untuk pengiriman ke luar pulau Sumatera?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok B (Risiko Teknis):</strong><br>
+              Apa mitigasi yang harus disiapkan jika traffic web melonjak 50x lipat saat malam Nuzulul Quran?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok C (Risiko Reputasi):</strong><br>
+              Bagaimana mengatasi komplain paket terlambat sampai H-1 lebaran akibat ekspedisi overload?
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Kesimpulan & Aksi -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kesimpulan & Aksi</span>
+          <h2 class="slide-title">Rangkuman Pertemuan 06 & Glosarium Kunci</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 06 - Manajemen Risiko, Kelebihan, Hambatan & Mitigasi Sistem E-Bisnis • Slide 12/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Takeaway Inti Pembelajaran</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>E-Bisnis menawarkan keuntungan operasional 24/7 dan data akurat, namun membawa <strong>risiko finansial, operasional, dan siber</strong> yang nyata.</li>
+              <li>Gunakan <strong>Risk Assessment Matrix</strong> untuk memprioritaskan mitigasi bahaya tingkat kritis.</li>
+              <li>Hindari <strong>Single Point of Failure (SPOF)</strong> dengan menerapkan redundansi cloud dan multi-gateway.</li>
+              <li>Patuhi <strong>UU PDP No. 27/2022</strong> demi melindungi data privasi konsumen dan masa depan bisnis Anda.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">📖 Glosarium Istilah Penting</div>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li><strong>Chargeback:</strong> Pembatalan dan penarikan paksa dana transaksi oleh bank penerbit kartu.</li>
+              <li><strong>SPOF:</strong> Komponen tunggal yang jika gagal/rusak mengakibatkan seluruh sistem mati.</li>
+              <li><strong>DRP:</strong> Panduan pemulihan sistem informasi saat bencana fatal melanda data center.</li>
+              <li><strong>SLA:</strong> Perjanjian jaminan ketersediaan layanan minimal dari vendor (misal 99.9%).</li>
+            </ul>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+          <h3 style="color: var(--primary); font-size: 18px;">Pekan Depan: Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi</h3>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">12</span> <button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+        activeSlide.scrollTop = 0;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>

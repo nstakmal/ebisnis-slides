@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital</title>
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight { border-top: 4px solid var(--primary); }
+    .card.warning { border-top: 4px solid var(--accent); }
+    .card.danger { border-top: 4px solid var(--danger); }
+    .card.success { border-top: 4px solid var(--success); }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 18px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .cover-slide {
+      background: linear-gradient(135deg, #042f2e 0%, #0f766e 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .cover-slide .subtitle {
+      font-size: 19px;
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    .controller {
+      height: 60px;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .notes-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e2e8f0;
+      padding: 16px 30px;
+      font-size: 13px;
+      border-radius: 0 0 16px 16px;
+      border-top: 3px solid var(--accent);
+      display: none;
+      line-height: 1.6;
+    }
+    .notes-drawer.open {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Fakultas Ilmu Komputer</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 07:<br>Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital</h1>
+      <p class="subtitle">Taksonomi Model Pembayaran Digital, Arsitektur QRIS & BI-FAST, Payment Gateway, Protokol Keamanan Transaksi, dan Sequence Alur Checkout.</p>
+      <div style="font-size: 16px; color: #f8fafc; margin-top: 18px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">
+        Program Studi Sistem Informasi — Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.12); border-left-color: var(--accent); color: #f8fafc; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau klik tombol di bawah untuk berpindah slide.</em>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Apersepsi & Dilema Nyata -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi & Dilema Nyata</span>
+          <h2 class="slide-title">Dilema Besar COD (Cash on Delivery) di Indonesia</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">📦</span> Mengapa Konsumen Suka COD?</div>
+            <ul class="bullet-list">
+              <li>Masyarakat merasa aman: bayar hanya jika paket fisik sudah dipegang tangan.</li>
+              <li>Menjangkau masyarakat *unbanked* (tidak punya rekening bank atau kartu kredit).</li>
+              <li>Menjadi pendorong utama adopsi belanja online awal di kota tier-2 dan tier-3.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <div class="card-title"><span class="card-icon">💸</span> Mengapa Toko Online Benci COD?</div>
+            <ul class="bullet-list">
+              <li><strong>Tingkat Retur Tinggi (RTS - Return to Sender):</strong> Rata-rata 20-35% paket COD ditolak pembeli saat kurir sampai dengan alasan tidak punya uang atau berubah pikiran!</li>
+              <li><strong>Kerugian Ongkir Dua Arah:</strong> Penjual wajib membayar ongkir kirim + ongkir barang retur.</li>
+              <li><strong>Perputaran Modal Macet:</strong> Uang baru disetor kurir ke penjual 7-14 hari kemudian.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Pertanyaan ke Mahasiswa:</strong> "Apa solusi sistem informasi untuk mengalihkan masyarakat dari kebiasaan COD tunai ke pembayaran non-tunai yang aman bagi kedua belah pihak?"
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Klasifikasi Finansial -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Klasifikasi Finansial</span>
+          <h2 class="slide-title">Taksonomi 3 Model Pembayaran Elektronik</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Pay-Now</div>
+            <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 8px;">(Uang Keluar Seketika)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Virtual Account (VA):</strong> Kode nomor unik rekening sementara per transaksi (BCA, Mandiri, BRI).</li>
+              <li><strong>Direct Debit:</strong> Saldo rekening bank otomatis terdebet via API resmi.</li>
+              <li><strong>Realtime Transfer:</strong> Fitur BI-FAST transfer antar bank tarif Rp 2.500.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Pay-Later</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 8px;">(Beli Sekarang, Bayar Nanti)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Kartu Kredit Konvensional:</strong> Visa, MasterCard, JCB.</li>
+              <li><strong>Buy Now Pay Later (BNPL):</strong> ShopeePayLater, GoPay Later, Kredivo, Akulaku.</li>
+              <li>Cicilan 0% tanpa kartu kredit berbasis persetujuan credit scoring cepat.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title">3. Stored-Value</div>
+            <p style="font-size: 12px; color: var(--success); font-weight: bold; margin-bottom: 8px;">(Dompet Saldo Tersimpan)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>E-Wallet:</strong> GoPay, OVO, Dana, LinkAja, ShopeePay.</li>
+              <li><strong>QRIS Dinamis:</strong> Standar pemindaian satu kode untuk semua e-wallet.</li>
+              <li><strong>Uang Elektronik Chip:</strong> Flazz BCA, e-Money Mandiri (biasanya kartu fisik tol).</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Infrastruktur Nasional -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Infrastruktur Nasional</span>
+          <h2 class="slide-title">Ekosistem QRIS & Jaringan BI-FAST Nasional</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">Revolusi QRIS (Bank Indonesia & ASPI)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Sebelum 2019: Toko harus memajang 5 stiker akrilik berbeda (OVO, GoPay, Dana, LinkAja, BCA). Kasir dan pembeli bingung!
+            </p>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px; font-size: 13px;">
+              <strong>Setelah QRIS: SATU KODE UNTUK SEMUA APLIKASI!</strong><br>
+              QRIS memadukan seluruh bank dan dompet digital melalui jaringan switching nasional (GPN: Artajasa, Rintis, Alto, Jalin).
+            </div>
+            <ul class="bullet-list" style="margin-top: 10px; font-size: 13px;">
+              <li><strong>QRIS Statis:</strong> Stiker cetak tetap di meja kasir. Pembeli input nominal uang sendiri secara manual.</li>
+              <li><strong>QRIS Dinamis (E-Commerce):</strong> Muncul di layar web/EDC dengan nominal tagihan yang sudah terkunci otomatis.</li>
+            </ul>
+          </div>
+          <div class="card blue" style="border-top: 4px solid #3b82f6;">
+            <div class="card-title">Infrastruktur BI-FAST</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Sistem pembayaran ritel nasional yang beroperasi 24/7 seketika (*Realtime Settlement*):
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Menurunkan biaya transfer antar-bank dari Rp 6.500 menjadi <strong>Rp 2.500</strong>.</li>
+              <li>Mendukung transaksi berbasis alias (cukup nomor HP atau email tanpa harus menghafal nomor rekening).</li>
+              <li>Mempercepat penyelesaian dana (*Settlement*) toko online dari hitungan hari menjadi hitungan detik.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Jembatan Transaksi -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Jembatan Transaksi</span>
+          <h2 class="slide-title">Peran Payment Gateway: Midtrans, Xendit, & Doku</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: var(--danger);"><span class="card-icon">😫</span> Tanpa Payment Gateway</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Merchant harus bekerja keras sendirian:</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Wajib membuka rekening di 20 bank berbeda satu-satu.</li>
+              <li>Wajib mengurus kontrak legal dan API dengan masing-masing bank (butuh waktu berbulan-bulan).</li>
+              <li>Staf kasir harus login m-banking tiap 5 menit untuk mengecek mutasi transfer secara manual.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);"><span class="card-icon">🚀</span> Dengan Payment Gateway</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Cukup 1 Akun, Semua Kanal Terbuka:</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Satu kali integrasi API, toko otomatis bisa menerima Virtual Account, QRIS, Kartu Kredit, Alfamart/Indomaret, dan PayLater.</li>
+              <li>Notifikasi pembayaran lunas otomatis masuk ke database toko via <strong>Webhook</strong> secara realtime.</li>
+              <li>Pencairan uang (*Disbursement / Payout*) otomatis terjadwal ke rekening utama merchant.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Protokol Keamanan -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Protokol Keamanan</span>
+          <h2 class="slide-title">3 Lapisan Pengamanan Pembayaran Digital</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Enkripsi SSL/TLS</div>
+            <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 8px;">(Jalur Pengiriman Aman)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Ikon gembok hijau HTTPS di browser.</li>
+              <li>Data nomor rekening dan password diacak dengan algoritma AES-256 sehingga tidak bisa disadap (*Sniffing*) di Wi-Fi kafe/kampus.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Tokenisasi PCI-DSS</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 8px;">(Data Kartu Rahasia)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Situs web toko <strong>DILARANG KERAS</strong> menyimpan 16 digit nomor kartu kredit dan kode CVV di database.</li>
+              <li>Data diganti dengan token acak unik (misal: `tok_99182abx`) yang hanya dimengerti oleh bank penerbit.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title">3. 3D Secure 2.0 & OTP</div>
+            <p style="font-size: 12px; color: var(--success); font-weight: bold; margin-bottom: 8px;">(Verifikasi Pemilik Sah)</p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Otentikasi multi-faktor (MFA).</li>
+              <li>SMS berisi kode OTP 6-angka atau otorisasi biometrik sidik jari di aplikasi mobile banking asli pemilik kartu.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Alur Sistem -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Alur Sistem</span>
+          <h2 class="slide-title">Sequence Diagram: Alur Detik-demi-Detik Transaksi Checkout</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+          <svg width="100%" height="250" viewBox="0 0 850 250">
+            <!-- Actors -->
+            <rect x="30" y="10" width="120" height="30" rx="6" fill="#eff6ff" stroke="#3b82f6"/>
+            <text x="90" y="30" font-size="11" font-weight="bold" fill="#1e40af" text-anchor="middle">1. Pembeli</text>
+            <line x1="90" y1="40" x2="90" y2="230" stroke="#cbd5e1" stroke-dasharray="4"/>
+
+            <rect x="230" y="10" width="130" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a"/>
+            <text x="295" y="30" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">2. Web Toko</text>
+            <line x1="295" y1="40" x2="295" y2="230" stroke="#cbd5e1" stroke-dasharray="4"/>
+
+            <rect x="440" y="10" width="150" height="30" rx="6" fill="#fff7ed" stroke="#ea580c"/>
+            <text x="515" y="30" font-size="11" font-weight="bold" fill="#9a3412" text-anchor="middle">3. Payment Gateway</text>
+            <line x1="515" y1="40" x2="515" y2="230" stroke="#cbd5e1" stroke-dasharray="4"/>
+
+            <rect x="670" y="10" width="130" height="30" rx="6" fill="#faf5ff" stroke="#9333ea"/>
+            <text x="735" y="30" font-size="11" font-weight="bold" fill="#6b21a8" text-anchor="middle">4. Bank / QRIS</text>
+            <line x1="735" y1="40" x2="735" y2="230" stroke="#cbd5e1" stroke-dasharray="4"/>
+
+            <!-- Steps -->
+            <line x1="90" y1="65" x2="295" y2="65" stroke="#3b82f6" stroke-width="2"/>
+            <text x="190" y="58" font-size="10" fill="#1e293b">1. Klik Checkout</text>
+
+            <line x1="295" y1="90" x2="515" y2="90" stroke="#16a34a" stroke-width="2"/>
+            <text x="405" y="83" font-size="10" fill="#1e293b">2. Request Invoice (Rp 100rb)</text>
+
+            <line x1="515" y1="115" x2="295" y2="115" stroke="#ea580c" stroke-width="2" stroke-dasharray="2"/>
+            <text x="405" y="110" font-size="10" fill="#1e293b">3. Kirim Nomor VA / QR Code</text>
+
+            <line x1="295" y1="140" x2="90" y2="140" stroke="#16a34a" stroke-width="2"/>
+            <text x="190" y="133" font-size="10" fill="#1e293b">4. Tampilkan QRIS di Layar</text>
+
+            <line x1="90" y1="165" x2="735" y2="165" stroke="#9333ea" stroke-width="2"/>
+            <text x="410" y="158" font-size="10" fill="#1e293b">5. Pembeli Scan QRIS & Masukkan PIN di M-Banking</text>
+
+            <line x1="735" y1="190" x2="515" y2="190" stroke="#9333ea" stroke-width="2"/>
+            <text x="625" y="183" font-size="10" fill="#1e293b">6. Notif Dana Masuk</text>
+
+            <line x1="515" y1="215" x2="295" y2="215" stroke="#ea580c" stroke-width="2"/>
+            <text x="405" y="208" font-size="10" font-weight="bold" fill="#c2410c">7. HTTP Webhook: PAID</text>
+          </svg>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Kecerdasan Buatan Finansial -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kecerdasan Buatan Finansial</span>
+          <h2 class="slide-title">Fraud Detection System (FDS): AI Pencegah Penipuan</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">Bagaimana Mesin FDS Bekerja?</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Dalam tempo <strong>0,2 detik</strong> sebelum transaksi disetujui, algoritma AI memeriksa 50+ variabel parameter perilaku:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Velocity Checking:</strong> Apakah 1 kartu yang sama mencoba transaksi 10 kali dalam 1 menit? (Pasti bot/hacker).</li>
+              <li><strong>Device Fingerprinting:</strong> Apakah kartu terdaftar milik nasabah di Medan, tapi IP dan browser berasal dari Rusia/Nigeria?</li>
+              <li><strong>Pola Nominal Anomali:</strong> Akun yang biasanya beli pulsa Rp 25rb tiba-tiba beli emas batangan Rp 50 Juta jam 3 subuh.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title">3 Keputusan Otomatis Sistem FDS</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+              <div style="background: #dcfce7; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #16a34a;">
+                🟢 <strong>APPROVE (Disetujui):</strong> Transaksi normal dan aman.
+              </div>
+              <div style="background: #fef9c3; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #ca8a04;">
+                🟡 <strong>CHALLENGE (Ditahan):</strong> Wajib memasukkan OTP tambahan ke HP nasabah.
+              </div>
+              <div style="background: #fee2e2; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #dc2626;">
+                🔴 <strong>REJECT (Ditolak):</strong> Transaksi langsung dibatalkan demi melindungi dana pemilik sah.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Inovasi Kredit Digital -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Inovasi Kredit Digital</span>
+          <h2 class="slide-title">Fenomena PayLater (BNPL) & AI Credit Scoring</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">Mengapa PayLater Meledak di Indonesia?</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Kartu kredit bank konvensional butuh slip gaji, survei kantor, dan syarat rumit. Hanya 6% orang Indonesia yang punya kartu kredit.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Persetujuan Kilat (5 Menit):</strong> Cukup foto KTP dan scan wajah di smartphone.</li>
+              <li><strong>Alternative Credit Scoring:</strong> Algoritma AI menilai kelayakan kredit bukan dari slip gaji, melainkan dari data histori belanja e-commerce, riwayat pembayaran pulsa, dan jejak digital pengguna.</li>
+            </ul>
+          </div>
+          <div class="card danger">
+            <div class="card-title">Risiko & Tata Kelola Regulasi</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Impulsive Buying:</strong> Konsumen muda tergoda belanja barang konsumtif melebihi kemampuan finansial.</li>
+              <li><strong>Non-Performing Loan (NPL):</strong> Risiko gagal bayar yang harus ditanggung perusahaan pembiayaan fintech.</li>
+              <li><strong>Pengawasan Ketat OJK:</strong> Wajib terdaftar di Otoritas Jasa Keuangan (OJK) dan terhubung ke sistem SLIK (Sistem Layanan Informasi Keuangan).</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Struktur Biaya -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Struktur Biaya</span>
+          <h2 class="slide-title">MDR (Merchant Discount Rate): Siapa yang Menanggung Biaya?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        
+        <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+          Tidak ada sistem transaksi di dunia yang 100% gratis. Setiap kanal pembayaran memiliki tarif <strong>MDR</strong>:
+        </p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Metode Pembayaran</th>
+              <th>Kisaran Biaya MDR</th>
+              <th>Mekanisme Biaya</th>
+              <th>Kecepatan Settlement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>QRIS Standar</strong></td>
+              <td>0,3% (Usaha Mikro)</td>
+              <td>Dipotong dari total transaksi</td>
+              <td>T+1 Hari Kerja</td>
+            </tr>
+            <tr>
+              <td><strong>Virtual Account (VA)</strong></td>
+              <td>Rp 2.000 - Rp 4.000 / transaksi</td>
+              <td>Biaya flat tetap per tagihan</td>
+              <td>Realtime / Harian</td>
+            </tr>
+            <tr>
+              <td><strong>E-Wallet (GoPay/OVO)</strong></td>
+              <td>1,5% - 2,0%</td>
+              <td>Dipotong dari omset penjualan</td>
+              <td>T+1 s/d T+2 Hari</td>
+            </tr>
+            <tr>
+              <td><strong>Kartu Kredit / Visa</strong></td>
+              <td>2,0% - 2,9% + Rp 2.000</td>
+              <td>Persentase + biaya gateway</td>
+              <td>T+3 s/d T+7 Hari</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top: 14px;">
+          <strong>Aturan Bank Indonesia:</strong> Merchant dilarang keras mengenakan biaya tambahan (*surcharge*) kepada pembeli yang membayar via QRIS. Biaya 0,3% adalah beban operasional merchant.
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Praktik Proyek PBL -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Praktik Proyek PBL</span>
+          <h2 class="slide-title">Diskusi Kelas: Memilih Saluran Pembayaran untuk Proyek Anda</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="card" style="background: #f8fafc; border: 2px dashed #94a3b8; padding: 22px;">
+          <h3 style="color: var(--primary); font-size: 17px; margin-bottom: 8px;">
+            📌 Kasus Tugas Kelompok Proyek PBL Mahasiswa
+          </h3>
+          <p style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 14px;">
+            Kelompok Anda merancang toko online produk lokal di Kisaran dengan rata-rata harga produk Rp 35.000 - Rp 100.000. Target pembeli adalah kalangan mahasiswa dan ibu rumah tangga muda.
+          </p>
+          <div class="grid-3">
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Pertanyaan 1:</strong><br>
+              Metode pembayaran apa yang PALING WAJIB disediakan di halaman checkout? Mengapa?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Pertanyaan 2:</strong><br>
+              Apakah toko ini butuh metode Kartu Kredit? Mengapa iya / mengapa tidak?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Pertanyaan 3:</strong><br>
+              Bagaimana cara menguji coba transaksi di website proyek tanpa memotong uang tabungan asli mahasiswa?
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Review Pra-UTS -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Review Pra-UTS</span>
+          <h2 class="slide-title">Rangkuman Pertemuan 1-7 & Kisi-Kisi UTS Pekan Depan</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 07 - Sistem Pembayaran Elektronik (E-Payment) & Keamanan Transaksi Digital • Slide 12/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Review Materi Menjelang UTS (Pertemuan 08)</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Mg 1-2:</strong> Pengantar E-Bisnis vs E-Commerce & 7 Elemen Pokok.</li>
+              <li><strong>Mg 3-4:</strong> Prinsip 4W, Rantai Nilai, Platform Economics & Efek Jaringan.</li>
+              <li><strong>Mg 5:</strong> Arsitektur 3-Tier, Cloud Computing & Integrasi REST API.</li>
+              <li><strong>Mg 6:</strong> Manajemen Risiko, SPOF, Chargeback & Mitigasi UU PDP.</li>
+              <li><strong>Mg 7:</strong> E-Payment, Ekosistem QRIS, Payment Gateway & Keamanan.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">📝 Format Ujian Tengah Semester (UTS)</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Bentuk Ujian:</strong> Studi Kasus Terstruktur (Case Method).</li>
+              <li>Mahasiswa diminta menganalisis sebuah skenario startup e-bisnis: menentukan model bisnis, merancang arsitektur sistem 3-tier, memilih payment gateway, dan memetakan mitigasi risiko keamanannya.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+          <h3 style="color: var(--primary); font-size: 20px;">Selamat Mempersiapkan Diri Menghadapi UTS! Sukses Selalu 🙏</h3>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">12</span> <button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+        activeSlide.scrollTop = 0;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>
