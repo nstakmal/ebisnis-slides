@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 05 - Infrastruktur & Arsitektur Sistem E-Bisnis</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #042f2e;
+      --primary-light: #14b8a6;
+      --accent: #f59e0b;
+      --accent-blue: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    /* Slide Stage */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Header styling */
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #ccfbf1;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #99f6e4;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Slide Content Layouts */
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* Visual Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight {
+      border-top: 4px solid var(--primary);
+    }
+
+    .card.warning {
+      border-top: 4px solid var(--accent);
+    }
+
+    .card.blue {
+      border-top: 4px solid var(--accent-blue);
+    }
+
+    .card.success {
+      border-top: 4px solid var(--success);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-icon {
+      font-size: 22px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 20px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    .callout {
+      background: #f0fdfa;
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #0f766e;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .callout strong {
+      color: #042f2e;
+    }
+
+    /* Cover Slide Specifics */
+    .cover-slide {
+      background: linear-gradient(135deg, #042f2e 0%, #0f766e 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 38px;
+      margin-bottom: 16px;
+    }
+    .cover-slide .subtitle {
+      font-size: 20px;
+      color: #99f6e4;
+      margin-bottom: 30px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Bottom Controller Bar */
+    .controller {
+      height: 60px;
+      background: #042f2e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #115e59;
+      border: 1px solid #14b8a6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-light);
+      color: #042f2e;
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    
+
+    /* Table visual */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    table.data-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Fakultas Ilmu Komputer</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 05:<br>Infrastruktur & Arsitektur Teknologi E-Bisnis</h1>
+      <p class="subtitle">Membongkar Mesin di Balik Layar: Arsitektur 3-Tier, Ekosistem Cloud Computing, Integrasi EAI & Jantung API Economy.</p>
+      <div style="font-size: 16px; color: #ccfbf1; margin-top: 20px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #99f6e4; margin-top: 4px;">
+        Program Studi Sistem Informasi — Fakultas Ilmu Komputer, Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.1); border-left-color: var(--accent); color: #f0fdfa; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau klik tombol di bawah untuk navigasi.</em>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 2: HOOK / APERSEPSI -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi Nyata</span>
+          <h2 class="slide-title">Anatomi Detik demi Detik Tombol "Checkout"</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        <p style="font-size: 15px; color: #475569; margin-bottom: 16px;">
+          Ketika seorang pembeli di Kisaran mengklik tombol <strong>"Bayar Sekarang"</strong> di aplikasi belanja online, apa yang terjadi dalam 1,5 detik berikutnya?
+        </p>
+
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 18px;">
+          <svg width="100%" height="150" viewBox="0 0 950 150">
+            <!-- Step 1 -->
+            <rect x="20" y="25" width="160" height="90" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+            <text x="100" y="52" font-size="13" font-weight="bold" fill="#1e40af" text-anchor="middle">1. Smartphone Klien</text>
+            <text x="100" y="72" font-size="11" fill="#475569" text-anchor="middle">Kirim Payload JSON via</text>
+            <text x="100" y="88" font-size="11" font-weight="bold" fill="#2563eb" text-anchor="middle">HTTPS Enkripsi SSL</text>
+
+            <path d="M 185 70 L 225 70" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr)"/>
+
+            <!-- Step 2 -->
+            <rect x="230" y="25" width="170" height="90" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+            <text x="315" y="52" font-size="13" font-weight="bold" fill="#166534" text-anchor="middle">2. API Gateway & Logic</text>
+            <text x="315" y="72" font-size="11" fill="#475569" text-anchor="middle">Validasi Akun Pengguna</text>
+            <text x="315" y="88" font-size="11" font-weight="bold" fill="#15803d" text-anchor="middle">Lock Stok di Database</text>
+
+            <path d="M 405 70 L 445 70" stroke="#94a3b8" stroke-width="2"/>
+
+            <!-- Step 3 -->
+            <rect x="450" y="25" width="170" height="90" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+            <text x="535" y="52" font-size="13" font-weight="bold" fill="#9a3412" text-anchor="middle">3. Payment Gateway</text>
+            <text x="535" y="72" font-size="11" fill="#475569" text-anchor="middle">Request Virtual Account</text>
+            <text x="535" y="88" font-size="11" font-weight="bold" fill="#c2410c" text-anchor="middle">ke API Bank / QRIS</text>
+
+            <path d="M 625 70 L 665 70" stroke="#94a3b8" stroke-width="2"/>
+
+            <!-- Step 4 -->
+            <rect x="670" y="25" width="160" height="90" rx="10" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+            <text x="750" y="52" font-size="13" font-weight="bold" fill="#6b21a8" text-anchor="middle">4. API Logistik</text>
+            <text x="750" y="72" font-size="11" fill="#475569" text-anchor="middle">Cek Tarif JNE/SiCepat</text>
+            <text x="750" y="88" font-size="11" font-weight="bold" fill="#7e22ce" text-anchor="middle">Generate Booking Resi</text>
+          </svg>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Poin Pengajaran Utama:</strong> Di balik 1 kali sentuhan jari, ada <strong>4 sistem server berbeda</strong> di berbagai belahan dunia yang saling berbicara dan bertukar data secara serentak. Itulah yang disebut <em>Infrastruktur E-Bisnis</em>!
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 3: 4 PILAR INFRASTRUKTUR -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Komponen Fundamental</span>
+          <h2 class="slide-title">4 Pilar Utama Penyusun Infrastruktur E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+          <!-- PILAR 1 -->
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🖥️</span> 1. Hardware</div>
+            <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin-bottom: 8px;">Perangkat Fisik Komputasi</p>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li>Server Fisik (Rak Data Center).</li>
+              <li>Load Balancer Hardware.</li>
+              <li>Storage SAN/NAS untuk penyimpanan data terdistribusi.</li>
+              <li>Perangkat Klien (PC, Smartphone, Tablet kasir POS).</li>
+            </ul>
+          </div>
+
+          <!-- PILAR 2 -->
+          <div class="card blue">
+            <div class="card-title"><span class="card-icon">💾</span> 2. Software</div>
+            <p style="font-size: 12px; color: var(--accent-blue); font-weight: bold; margin-bottom: 8px;">Aplikasi & Sistem Operasi</p>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li>Sistem Operasi Server (Linux Ubuntu/Debian/RHEL).</li>
+              <li>Web Server (Nginx, Apache, Caddy).</li>
+              <li>Database Management System (MySQL, PostgreSQL, MongoDB).</li>
+              <li>E-Commerce Software Engine.</li>
+            </ul>
+          </div>
+
+          <!-- PILAR 3 -->
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">📡</span> 3. Network</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 8px;">Jalur Telekomunikasi</p>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li>Bandwidth Internet & CDN (Cloudflare).</li>
+              <li>Domain Name System (DNS).</li>
+              <li>Protokol Keamanan (HTTPS / TLS 1.3).</li>
+              <li>VPN & Firewall Jaringan (WAF).</li>
+            </ul>
+          </div>
+
+          <!-- PILAR 4 -->
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">☁️</span> 4. Cloud & Data</div>
+            <p style="font-size: 12px; color: var(--success); font-weight: bold; margin-bottom: 8px;">Penyimpanan & Layanan</p>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li>Layanan Cloud (AWS, Google Cloud, Alibaba Cloud).</li>
+              <li>Data Warehouse & Data Lake.</li>
+              <li>Object Storage untuk ribuan foto produk (Amazon S3 / Google GCS).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 20px;">
+          <strong>Definisi Standar:</strong> <em>"Infrastruktur e-bisnis adalah arsitektur hardware, software, konten, dan data yang digunakan untuk memberikan layanan bisnis digital kepada karyawan, pelanggan, dan mitra bisnis secara andal."</em> (Modul E-Bisnis KB 4).
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 4: ARSITEKTUR 3-TIER -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Arsitektur Perangkat Lunak</span>
+          <h2 class="slide-title">Arsitektur Standar Web E-Bisnis: 3-Tier Layer</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <!-- DIAGRAM 3 TIER -->
+          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+            <svg width="100%" height="280" viewBox="0 0 450 280">
+              <!-- Tier 1 -->
+              <rect x="30" y="15" width="390" height="65" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+              <text x="225" y="40" font-size="14" font-weight="bold" fill="#1e40af" text-anchor="middle">TIER 1: PRESENTATION LAYER</text>
+              <text x="225" y="60" font-size="11" fill="#64748b" text-anchor="middle">Browser Web, Mobile App (HTML5, CSS, React, Vue, Flutter)</text>
+
+              <!-- Connector 1-2 -->
+              <path d="M 225 80 L 225 105" stroke="#3b82f6" stroke-width="3" stroke-dasharray="4"/>
+              <text x="290" y="96" font-size="10" font-weight="bold" fill="#2563eb">HTTPS / JSON</text>
+
+              <!-- Tier 2 -->
+              <rect x="30" y="105" width="390" height="75" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+              <text x="225" y="130" font-size="14" font-weight="bold" fill="#166534" text-anchor="middle">TIER 2: APPLICATION / BUSINESS LOGIC</text>
+              <text x="225" y="150" font-size="11" fill="#64748b" text-anchor="middle">Web Server & App Logic (PHP Laravel, Node.js, Python, Java)</text>
+              <text x="225" y="166" font-size="10" fill="#15803d" text-anchor="middle">(Aturan Diskon, Keranjang, Verifikasi Pembayaran)</text>
+
+              <!-- Connector 2-3 -->
+              <path d="M 225 180 L 225 205" stroke="#16a34a" stroke-width="3" stroke-dasharray="4"/>
+              <text x="290" y="196" font-size="10" font-weight="bold" fill="#15803d">SQL Queries</text>
+
+              <!-- Tier 3 -->
+              <rect x="30" y="205" width="390" height="65" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+              <text x="225" y="230" font-size="14" font-weight="bold" fill="#9a3412" text-anchor="middle">TIER 3: DATABASE & DATA STORAGE</text>
+              <text x="225" y="250" font-size="11" fill="#64748b" text-anchor="middle">Penyimpanan Terstruktur (MySQL, PostgreSQL) & Cache (Redis)</text>
+            </svg>
+          </div>
+
+          <!-- EXPLANATION -->
+          <div class="card highlight">
+            <div class="card-title">Mengapa Harus Dipisah 3 Lapisan?</div>
+            <ul class="bullet-list">
+              <li>
+                <strong>1. Keamanan Data (Security Isolation):</strong><br>
+                Pengguna di Tier 1 tidak pernah bisa langsung mengakses database (Tier 3). Semua permintaan disaring dan divalidasi ketat oleh logika Tier 2.
+              </li>
+              <li>
+                <strong>2. Kemudahan Maintenance & Update:</strong><br>
+                Jika tim desainer ingin mengubah tampilan warna tombol web (Tier 1), mereka tidak perlu mengutak-atik kode database atau server backend.
+              </li>
+              <li>
+                <strong>3. Skalabilitas Independen:</strong><br>
+                Jika pengunjung membludak, kita cukup menambah server aplikasi (Tier 2) tanpa harus mengubah struktur database.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 5: CLOUD COMPUTING (PIZZA AS A SERVICE) -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Paradigma Modern</span>
+          <h2 class="slide-title">Cloud Computing: IaaS vs PaaS vs SaaS</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        <p style="font-size: 14px; color: #475569; margin-bottom: 12px;">
+          Memahami 3 model layanan cloud dengan <strong>Analogi "Pizza as a Service"</strong>:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+          <!-- ON PREMISE -->
+          <div class="card">
+            <div style="font-size: 12px; font-weight: bold; color: var(--danger);">1. On-Premise (Tradisional)</div>
+            <div style="font-size: 16px; font-weight: 800; margin: 4px 0;">"Bikin Pizza di Rumah"</div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Anda urus SEMUANYA sendiri:</p>
+            <div style="font-size: 11px; background: #fee2e2; padding: 8px; border-radius: 6px; line-height: 1.5;">
+              Beli oven, beli gas, racik adonan, sediakan meja makan, cuci piring sendiri.<br>
+              <strong>Di TI:</strong> Beli server fisik, pasang AC data center, urus kabel LAN sendiri.
+            </div>
+          </div>
+
+          <!-- IAAS -->
+          <div class="card" style="border-top: 4px solid var(--accent-blue);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--accent-blue);">2. IaaS (Infrastructure)</div>
+            <div style="font-size: 16px; font-weight: 800; margin: 4px 0;">"Beli Adonan Beku"</div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Sewa mesin mentah:</p>
+            <div style="font-size: 11px; background: #dbeafe; padding: 8px; border-radius: 6px; line-height: 1.5;">
+              Adonan & oven disewa, Anda tinggal masak dan sajikan.<br>
+              <strong>Di TI:</strong> Sewa Virtual Machine di AWS EC2 / Google Compute Engine. Anda pasang OS dan koding sendiri.
+            </div>
+          </div>
+
+          <!-- PAAS -->
+          <div class="card highlight">
+            <div style="font-size: 12px; font-weight: bold; color: var(--primary);">3. PaaS (Platform)</div>
+            <div style="font-size: 16px; font-weight: 800; margin: 4px 0;">"Pesan Pizza Delivery"</div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Fokus bikin kode saja:</p>
+            <div style="font-size: 11px; background: #ccfbf1; padding: 8px; border-radius: 6px; line-height: 1.5;">
+              Pizza diantar matang, Anda cuma siapkan meja & minuman.<br>
+              <strong>Di TI:</strong> Heroku, Vercel, Firebase. Anda cuma upload kode aplikasi, server otomatis jalan.
+            </div>
+          </div>
+
+          <!-- SAAS -->
+          <div class="card" style="border-top: 4px solid var(--success);">
+            <div style="font-size: 12px; font-weight: bold; color: var(--success);">4. SaaS (Software)</div>
+            <div style="font-size: 16px; font-weight: 800; margin: 4px 0;">"Makan di Resto Pizza Hut"</div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Tinggal pakai langsung:</p>
+            <div style="font-size: 11px; background: #dcfce7; padding: 8px; border-radius: 6px; line-height: 1.5;">
+              Duduk manis, makan, bayar, selesai.<br>
+              <strong>Di TI:</strong> Shopify, Google Workspace, Canva, SAP Cloud. Langsung pakai lewat browser.
+            </div>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 18px;">
+          <strong>Rekomendasi Proyek Mahasiswa:</strong> Untuk tugas kelompok e-bisnis nanti, gunakan model <strong>PaaS</strong> (Vercel/Railway) atau <strong>SaaS</strong> (Shopify/WooCommerce) agar tidak pusing mengonfigurasi hardware server dari nol.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 6: EAI (ENTERPRISE APPLICATION INTEGRATION) -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Integrasi Korporat</span>
+          <h2 class="slide-title">Enterprise Application Integration (EAI)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: var(--danger);"><span class="card-icon">🍝</span> Masalah Spaghetti Architecture</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+              Ketika perusahaan punya 5 sistem berbeda (Toko Web, ERP Gudang, CRM Sales, Akuntansi, dan HRD) dan semuanya dihubungkan secara manual satu per satu:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Koneksi antar sistem rumit semrawut seperti kabel kusut.</li>
+              <li>Jika 1 aplikasi di-update, 4 aplikasi lainnya bisa ikut rusak/crash!</li>
+              <li>Sangat sulit menambah fitur atau mitra baru.</li>
+            </ul>
+          </div>
+
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);"><span class="card-icon">🎯</span> Solusi: Pendekatan EAI Hub & Bus</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+              EAI bertindak sebagai penerjemah dan jembatan sentral (*Middleware*):
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Setiap aplikasi hanya perlu terhubung ke 1 titik: <strong>Enterprise Service Bus (ESB)</strong>.</li>
+              <li>Format data lama (XML/EDI) otomatis dikonversi menjadi format web modern (JSON).</li>
+              <li>Integrasi antar divisi korporat berjalan mulus tanpa merusak sistem lawas (*Legacy Systems*).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Diagram EAI Bus -->
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 14px;">
+          <svg width="100%" height="110" viewBox="0 0 800 110">
+            <!-- Center Bus -->
+            <rect x="50" y="40" width="700" height="30" rx="6" fill="#0f766e"/>
+            <text x="400" y="60" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">MIDDLEWARE INTEGRATION BUS (EAI / API HUB)</text>
+
+            <!-- Connected Nodes -->
+            <rect x="70" y="2" width="110" height="26" rx="4" fill="#e2e8f0" stroke="#475569"/>
+            <text x="125" y="19" font-size="10" font-weight="bold" text-anchor="middle">E-Commerce Web</text>
+            <path d="M 125 28 L 125 40" stroke="#0f766e" stroke-width="2"/>
+
+            <rect x="230" y="2" width="110" height="26" rx="4" fill="#e2e8f0" stroke="#475569"/>
+            <text x="285" y="19" font-size="10" font-weight="bold" text-anchor="middle">ERP Gudang (SAP)</text>
+            <path d="M 285 28 L 285 40" stroke="#0f766e" stroke-width="2"/>
+
+            <rect x="390" y="2" width="110" height="26" rx="4" fill="#e2e8f0" stroke="#475569"/>
+            <text x="445" y="19" font-size="10" font-weight="bold" text-anchor="middle">CRM Pelanggan</text>
+            <path d="M 445 28 L 445 40" stroke="#0f766e" stroke-width="2"/>
+
+            <rect x="550" y="2" width="110" height="26" rx="4" fill="#e2e8f0" stroke="#475569"/>
+            <text x="605" y="19" font-size="10" font-weight="bold" text-anchor="middle">Finance & Pajak</text>
+            <path d="M 605 28 L 605 40" stroke="#0f766e" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 7: API ECONOMY & WEBHOOKS -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Standar Industri Saat Ini</span>
+          <h2 class="slide-title">Jantung E-Bisnis Modern: API Economy & Webhooks</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">1. REST API (Request - Response)</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+              Aplikasi Anda bertanya, server luar menjawab.
+            </p>
+            <div style="background: #0f172a; color: #38bdf8; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 11px;">
+              GET /api/ongkir?asal=kisaran&tujuan=medan<br><br>
+              <span style="color: #4ade80;">// Response JSON:</span><br>
+              {<br>
+              &nbsp;&nbsp;"kurir": "JNE REG",<br>
+              &nbsp;&nbsp;"tarif": 15000,<br>
+              &nbsp;&nbsp;"estimasi_hari": "1-2"<br>
+              }
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+              Digunakan saat website butuh data realtime (cek ongkos kirim, cek stok supplier).
+            </p>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title">2. Webhooks (Event-Driven Alert)</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+              Server luar yang proaktif menepuk bahu website Anda saat ada kejadian!
+            </p>
+            <div style="background: #0f172a; color: #f59e0b; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 11px;">
+              POST https://tokoku.com/webhook/payment<br><br>
+              <span style="color: #4ade80;">// Sinyal Masuk dari Midtrans:</span><br>
+              {<br>
+              &nbsp;&nbsp;"order_id": "ORD-9912",<br>
+              &nbsp;&nbsp;"status": "PAID",<br>
+              &nbsp;&nbsp;"channel": "QRIS_BCA"<br>
+              }
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+              Digunakan saat pembeli sudah bayar di m-banking. Website tidak perlu refresh berulang kali, otomatis status order berubah lunas!
+            </p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Konsep API Economy:</strong> Saat ini bisnis tidak perlu membuat segalanya sendiri. Mau fitur peta? Pakai Google Maps API. Mau kasir? Pakai Midtrans API. Mau kirim WA? Pakai Twilio / Fonnte API. Bisnis e-commerce modern dibangun dari rangkain API (*Lego-like Architecture*).
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 8: HIGH AVAILABILITY & FLASH SALE -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kinerja & Keandalan</span>
+          <h2 class="slide-title">Mengapa Server Tokopedia Tidak Jebol Saat Flash Sale 12.12?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-3">
+          <div class="card blue">
+            <div class="card-title"><span class="card-icon">⚖️</span> 1. Load Balancer</div>
+            <p style="font-size: 13px; color: #334155;">
+              Berperan seperti polisi lalu lintas. Membagi 1 juta pengunjung yang datang bersamaan ke 50 server berbeda secara adil sehingga tidak ada 1 server pun yang kepanasan atau hang.
+            </p>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">⚡</span> 2. Redis Caching</div>
+            <p style="font-size: 13px; color: #334155;">
+              Menyimpan data katalog produk di memori RAM super cepat. Ketika 100.000 orang melihat foto sepatu yang sama, server tidak membebani database utama berulang kali.
+            </p>
+          </div>
+
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">📈</span> 3. Auto-Scaling</div>
+            <p style="font-size: 13px; color: #334155;">
+              Kapasitas server cloud bertambah otomatis secara elastis! Jika traffic biasa butuh 2 server, saat jam promo 12.12 server otomatis menggandakan diri menjadi 20 server, lalu mengecil lagi setelah promo selesai.
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram Load Balancer -->
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 18px;">
+          <svg width="100%" height="110" viewBox="0 0 850 110">
+            <rect x="20" y="35" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+            <text x="85" y="59" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">Jutaan User Web</text>
+
+            <path d="M 155 55 L 235 55" stroke="#3b82f6" stroke-width="3"/>
+
+            <rect x="240" y="25" width="170" height="60" rx="10" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+            <text x="325" y="52" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">LOAD BALANCER</text>
+            <text x="325" y="70" font-size="10" fill="#fffbeb" text-anchor="middle">(NGINX / AWS ALB)</text>
+
+            <!-- Branches -->
+            <path d="M 415 40 L 515 20" stroke="#10b981" stroke-width="2"/>
+            <rect x="520" y="5" width="140" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a"/>
+            <text x="590" y="24" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">Server Web 1 (App)</text>
+
+            <path d="M 415 55 L 515 55" stroke="#10b981" stroke-width="2"/>
+            <rect x="520" y="40" width="140" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a"/>
+            <text x="590" y="59" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">Server Web 2 (App)</text>
+
+            <path d="M 415 70 L 515 90" stroke="#10b981" stroke-width="2"/>
+            <rect x="520" y="75" width="140" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a"/>
+            <text x="590" y="94" font-size="11" font-weight="bold" fill="#166534" text-anchor="middle">Server Web N (App)</text>
+          </svg>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 9: KEAMANAN INFRASTRUKTUR -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Keamanan Siber & Kepatuhan</span>
+          <h2 class="slide-title">Lapisan Pertahanan Keamanan Siber E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🛡️</span> 3 Lapisan Pertahanan Wajib</div>
+            <ul class="bullet-list">
+              <li>
+                <strong>1. Data in Transit (Enkripsi Jalur):</strong><br>
+                Protokol HTTPS (SSL/TLS 1.3). Menjamin nomor kartu kredit dan kata sandi diacak sehingga tidak bisa disadap di jaringan Wi-Fi umum (*Anti-Sniffing*).
+              </li>
+              <li>
+                <strong>2. Data at Rest (Enkripsi Penyimpanan):</strong><br>
+                Data password di database wajib di-hash satu arah (Bcrypt/Argon2). Nomor rekening dan data pribadi dienkripsi AES-256 agar jika server diretas, hacker hanya mendapat teks acak tak terbaca.
+              </li>
+              <li>
+                <strong>3. Perimeter Defense (Web Application Firewall):</strong><br>
+                Cloudflare / AWS WAF untuk menyaring serangan DDoS dan serangan injeksi SQL jahat sebelum sampai ke server.
+              </li>
+            </ul>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">⚖️</span> Kepatuhan Regulasi Indonesia</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+              Sesuai amanat <strong>UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP)</strong>:
+            </p>
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; font-size: 12px; line-height: 1.6; color: #92400e;">
+              ⚠️ Setiap pengembang dan pemilik sistem e-bisnis diwajibkan secara hukum menerapkan standar keamanan teknis yang memadai.<br><br>
+              Jika terjadi kebocoran data pengguna akibat kelalaian sistem (tanpa enkripsi), perusahaan terancam sanksi penghentian operasional dan denda ganti rugi hingga miliaran rupiah.
+            </div>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Pesan Moral untuk Mahasiswa SI:</strong> Jangan pernah menyimpan password pengguna dalam bentuk plain text di database! Gunakan fungsi hash dan protokol keamanan standar industri.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 10: TAHAPAN PEMBANGUNAN SISTEM -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Siklus Hidup Pengembangan</span>
+          <h2 class="slide-title">5 Tahap Pembangunan Infrastruktur Sistem E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        <p style="font-size: 14px; color: #475569; margin-bottom: 14px;">
+          Berdasarkan Modul E-Bisnis KB 4 (Siklus Rekayasa Sistem Informasi Bisnis):
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+          <div class="card" style="border-top: 4px solid #3b82f6;">
+            <div style="font-size: 11px; font-weight: bold; color: #3b82f6;">TAHAP 1</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Perencanaan</div>
+            <p style="font-size: 11px; color: #475569;">
+              Menentukan model bisnis, studi kelayakan anggaran, dan pemilihan target audiens.
+            </p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #0f766e;">
+            <div style="font-size: 11px; font-weight: bold; color: #0f766e;">TAHAP 2</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Analisis</div>
+            <p style="font-size: 11px; color: #475569;">
+              Analisis kebutuhan fungsional (fitur checkout, metode bayar) dan non-fungsional (kecepatan, keamanan).
+            </p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #f59e0b;">
+            <div style="font-size: 11px; font-weight: bold; color: #f59e0b;">TAHAP 3</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Perancangan</div>
+            <p style="font-size: 11px; color: #475569;">
+              Desain UI/UX Wireframe, pemodelan database ERD, dan spesifikasi arsitektur 3-tier.
+            </p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #8b5cf6;">
+            <div style="font-size: 11px; font-weight: bold; color: #8b5cf6;">TAHAP 4</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Penerapan</div>
+            <p style="font-size: 11px; color: #475569;">
+              Coding frontend/backend, setup cloud hosting, integrasi API gateway, dan pengujian sistem (*Testing*).
+            </p>
+          </div>
+
+          <div class="card" style="border-top: 4px solid #10b981;">
+            <div style="font-size: 11px; font-weight: bold; color: #10b981;">TAHAP 5</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Evaluasi</div>
+            <p style="font-size: 11px; color: #475569;">
+              Pemantauan performa server harian, ulasan pelanggan, dan perbaikan bug secara berkala.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 18px;">
+          <strong>Penting untuk Proyek PBL Mahasiswa:</strong> Seluruh tugas proyek kelompok yang akan dikerjakan di semester ini akan mengikuti tahapan 1 sampai 5 ini secara terstruktur!
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 11: PANDUAN PRAKTIK PROYEK -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Praktik Proyek PBL</span>
+          <h2 class="slide-title">Panduan Memilih Teknologi untuk Tugas Kelompok Anda</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        <p style="font-size: 14px; color: #475569; margin-bottom: 14px;">
+          Setiap kelompok mahasiswa dapat memilih salah satu dari 2 jalur teknologi pengembangan berikut:
+        </p>
+
+        <div class="grid-2">
+          <!-- JALUR A -->
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🚀</span> Jalur A: Low-Code CMS (Cepat & Siap Bisnis)</div>
+            <div style="font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 8px;">
+              Pilihan: WordPress + WooCommerce / Shopify
+            </div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Kelebihan:</strong> Antarmuka admin toko sudah siap pakai, fitur keranjang belanja dan invoice otomatis tersedia.</li>
+              <li><strong>Integrasi:</strong> Sangat mudah dipasangi plugin Payment Gateway Midtrans dan plugin ongkir RajaOngkir.</li>
+              <li><strong>Cocok untuk:</strong> Kelompok yang ingin fokus pada strategi marketing, katalog produk, dan model bisnis.</li>
+            </ul>
+          </div>
+
+          <!-- JALUR B -->
+          <div class="card blue">
+            <div class="card-title"><span class="card-icon">💻</span> Jalur B: Custom Web Framework (Eksplorasi SI)</div>
+            <div style="font-size: 12px; font-weight: bold; color: var(--accent-blue); margin-bottom: 8px;">
+              Pilihan: PHP Laravel / Next.js / Node.js Express
+            </div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Kelebihan:</strong> Fleksibilitas tinggi dalam merancang skema database sendiri dan integrasi REST API kustom.</li>
+              <li><strong>Tantangan:</strong> Butuh waktu koding lebih banyak untuk membangun halaman cart dan otentikasi login.</li>
+              <li><strong>Cocok untuk:</strong> Kelompok yang ingin melatih kemampuan koding backend dan arsitektur database.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Toleransi Dosen:</strong> Keduanya bernilai sama tinggi! Yang dinilai bukan seberapa rumit kodingnya, melainkan bagaimana sistem tersebut <em>menyelesaikan masalah bisnis dan berfungsi dengan aman</em>.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 12: RANGKUMAN & KUIS CEPAT -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kesimpulan & Kuis</span>
+          <h2 class="slide-title">Rangkuman Kunci & Kuis Cepat Pemahaman</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 05 • Slide 12/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Takeaway Pembelajaran Pertemuan 05</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Infrastruktur e-bisnis ditopang oleh <strong>Hardware, Software, Network, dan Cloud</strong>.</li>
+              <li>Arsitektur <strong>3-Tier</strong> memisahkan Presentation, Business Logic, dan Database demi keamanan dan skalabilitas.</li>
+              <li>Ekosistem <strong>Cloud (IaaS/PaaS/SaaS)</strong> membebaskan bisnis dari kewajiban membeli server fisik yang mahal.</li>
+              <li><strong>REST API dan Webhooks</strong> adalah bahasa pengikat antar sistem yang memungkinkan toko online terhubung ke bank dan logistik dalam hitungan detik.</li>
+            </ul>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title">🧠 Kuis Cepat Kelas (1 Menit):</div>
+            <p style="font-size: 13px; color: #1e293b; margin-bottom: 8px;">
+              <em>"Ketika seorang pelanggan sukses scan QRIS lalu layar aplikasi toko online otomatis berubah menjadi 'Pesanan Dibayar', teknologi apa yang bertugas mengirim kabar tersebut?"</em>
+            </p>
+            <div style="font-size: 13px; background: #fff; padding: 10px; border-radius: 6px; border: 1px dashed var(--accent);">
+              <strong>Pilihan:</strong><br>
+              A. Load Balancer<br>
+              B. Webhook HTTP Callback<br>
+              C. Kabel LAN Server
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 22px;">
+          <h3 style="color: var(--primary); font-size: 20px;">Pekan Depan: Pertemuan 06 - Manajemen Risiko & Mitigasi E-Bisnis</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Program Studi Sistem Informasi — Fakultas Ilmu Komputer, Universitas Royal Kisaran</p>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <!-- BOTTOM CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">12</span>
+      <span style="font-size: 11px; margin-left: 15px; color: #99f6e4;"><button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button></span>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard Listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>

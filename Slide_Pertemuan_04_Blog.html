@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 04 - Transformasi Digital, Platform Economics & Ekonomi Digital</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-light), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    /* Slide Stage */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Header styling */
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary-light);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Slide Content Layouts */
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* Visual Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight {
+      border-top: 4px solid var(--primary-light);
+    }
+
+    .card.warning {
+      border-top: 4px solid var(--accent);
+    }
+
+    .card.success {
+      border-top: 4px solid var(--success);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-icon {
+      font-size: 22px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary-light);
+      font-weight: bold;
+      font-size: 20px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    /* Diagram Containers */
+    .diagram-box {
+      background: #f1f5f9;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary-light);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .callout strong {
+      color: #0f172a;
+    }
+
+    /* Cover Slide Specifics */
+    .cover-slide {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 38px;
+      margin-bottom: 16px;
+    }
+    .cover-slide .subtitle {
+      font-size: 20px;
+      color: #93c5fd;
+      margin-bottom: 30px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Bottom Controller Bar */
+    .controller {
+      height: 60px;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-light);
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    
+
+    /* SVG Diagram Nodes */
+    .node-rect {
+      fill: #ffffff;
+      stroke: #3b82f6;
+      stroke-width: 2;
+      rx: 8;
+    }
+    .node-text {
+      font-size: 13px;
+      font-weight: 700;
+      fill: #0f172a;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Prodi Sistem Informasi</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 04:<br>Ekonomi Digital, Platform Economics & Transformasi Bisnis</h1>
+      <p class="subtitle">Memahami Peran Strategis TI, Disrupsi Pasar, Hukum-Hukum Ekonomi Digital, dan Model Ekosistem Multi-Sisi.</p>
+      <div style="font-size: 16px; color: #cbd5e1; margin-top: 20px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">
+        Program Studi Sistem Informasi — Fakultas Ilmu Komputer, Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.1); border-left-color: var(--accent); color: #f8fafc; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau klik tombol di bawah untuk berpindah slide.</em>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 2: APERSEPSI & HOOK -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi & Refleksi Kritis</span>
+          <h2 class="slide-title">Mengapa Raksasa Bisnis Konvensional Bisa Tumbang?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🚕</span> Kasus Transportasi</div>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Bluebird vs Gojek & Grab</p>
+            <ul class="bullet-list">
+              <li>Bluebird punya puluhan ribu armada mobil fisik, pool bengkel raksasa, dan izin pemda.</li>
+              <li>Gojek & Grab <strong>tidak memiliki 1 unit mobil pun</strong>, tetapi valuasinya melesat 10x lipat lebih tinggi.</li>
+              <li><strong>Kunci:</strong> Model bisnis platform yang menghubungkan supply dan demand secara instan.</li>
+            </ul>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">🏨</span> Kasus Akomodasi</div>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Marriott vs Airbnb</p>
+            <ul class="bullet-list">
+              <li>Hotel Marriott butuh 50 tahun untuk membangun 600.000 kamar hotel fisik berbiaya triliunan.</li>
+              <li>Airbnb menyediakan 6.000.000 kamar di seluruh dunia tanpa membangun 1 bata pun.</li>
+              <li><strong>Kunci:</strong> Monetisasi aset menganggur (idle assets) via internet.</li>
+            </ul>
+          </div>
+
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">📸</span> Kasus Fotografi</div>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Kodak vs Instagram</p>
+            <ul class="bullet-list">
+              <li>Kodak mempekerjakan 140.000 karyawan dan pabrik kimia film raksasa, lalu bangkrut di 2012.</li>
+              <li>Instagram dibeli Facebook seharga $1 Miliar saat karyawannya <strong>hanya 13 orang</strong>!</li>
+              <li><strong>Kunci:</strong> Efek jaringan sosial dan zero marginal cost distribusi digital.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Pertanyaan ke Mahasiswa:</strong> "Apa kesamaan dari ketiga fenomena di atas? Mengapa aset fisik besar tidak lagi menjamin kemenangan di era digital?"
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 3: PERBANDINGAN EKONOMI -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Konsep Dasar</span>
+          <h2 class="slide-title">Ekonomi Konvensional vs Ekonomi Digital</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid var(--danger);">
+            <div class="card-title" style="color: var(--danger);"><span class="card-icon">🏭</span> Ekonomi Konvensional (Old Economy)</div>
+            <ul class="bullet-list">
+              <li><strong>Faktor Produksi Utama:</strong> Tanah, gedung pabrik fisik, mesin modal, dan tenaga kerja otot.</li>
+              <li><strong>Hukum Hasil:</strong> <em>Law of Diminishing Returns</em> (Semakin banyak diproduksi, biaya kapasitas fisik makin membengkak).</li>
+              <li><strong>Struktur Biaya:</strong> Biaya marginal (biaya cetak/produksi per unit tambahan) tetap tinggi.</li>
+              <li><strong>Batas Geografis:</strong> Terkunci oleh jangkauan toko fisik atau radius kantor cabang.</li>
+              <li><strong>Kecepatan Skalabilitas:</strong> Lambat (Butuh berbulan-bulan untuk buka 1 cabang baru).</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-left: 4px solid var(--success);">
+            <div class="card-title" style="color: var(--success);"><span class="card-icon">🌐</span> Ekonomi Digital (New Economy)</div>
+            <ul class="bullet-list">
+              <li><strong>Faktor Produksi Utama:</strong> Informasi, algoritma perangkat lunak, data analitik, dan jaringan (networking).</li>
+              <li><strong>Hukum Hasil:</strong> <em>Increasing Returns to Scale</em> (Makin besar jaringan pengguna, nilai sistem justru makin eksponensial).</li>
+              <li><strong>Struktur Biaya:</strong> <em>Zero Marginal Cost</em> (Biaya menambah 1 pengguna aplikasi nyaris Rp 0).</li>
+              <li><strong>Batas Geografis:</strong> Tanpa batas wilayah (*Borderless & 24/7 Access*).</li>
+              <li><strong>Kecepatan Skalabilitas:</strong> Instan (Aplikasi diunduh jutaan user dalam hitungan hari).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="diagram-box" style="margin-top: 15px; background: #ffffff;">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--primary);">
+            🔑 Rumus Inti Keunggulan Digital:
+          </div>
+          <div style="font-size: 15px; color: #334155; text-align: center;">
+            <code style="background: #e2e8f0; padding: 4px 10px; border-radius: 6px; font-weight: bold;">
+              Nilai Bisnis Digital = (Algoritma Efisien) × (Kekuatan Jaringan Pengguna) ÷ (Biaya Operasional Nyaris Tetap)
+            </code>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 4: HUKUM EKONOMI DIGITAL -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Fondasi Teori</span>
+          <h2 class="slide-title">3 Hukum Utama Pembentuk Lanskap Ekonomi Digital</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Hukum Moore</div>
+            <p style="font-size: 12px; color: var(--primary-light); font-weight: 700;">(Gordon Moore - Intel)</p>
+            <p style="font-size: 14px; margin: 10px 0; color: #334155;">
+              "Daya komputasi dan kepadatan transistor mikroprosesor berlipat ganda setiap 18-24 bulan, sementara harganya semakin murah."
+            </p>
+            <div class="callout" style="font-size: 12px; margin-top: 8px;">
+              <strong>Dampak Nyata:</strong> Smartphone Rp 2 jutaan mahasiswa saat ini memiliki komputasi jutaan kali lebih hebat dibanding komputer NASA saat mendaratkan Apollo ke bulan!
+            </div>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title">2. Hukum Metcalfe</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: 700;">(Robert Metcalfe - Ethernet)</p>
+            <p style="font-size: 14px; margin: 10px 0; color: #334155;">
+              "Nilai dari suatu jaringan telekomunikasi/digital sebanding dengan kuadrat jumlah penggunanya: <strong>V &prop; N&sup2;</strong>"
+            </p>
+            <div class="callout" style="font-size: 12px; margin-top: 8px;">
+              <strong>Dampak Nyata:</strong> Jika hanya 1 orang pakai WhatsApp, nilainya = 0. Jika ada 1 miliar orang memakai, nilainya melonjak triliunan rupiah karena semua orang terhubung.
+            </div>
+          </div>
+
+          <div class="card success">
+            <div class="card-title">3. Zero Marginal Cost</div>
+            <p style="font-size: 12px; color: var(--success); font-weight: 700;">(Jeremy Rifkin)</p>
+            <p style="font-size: 14px; margin: 10px 0; color: #334155;">
+              "Biaya untuk memproduksi dan mendistribusikan satu unit salinan tambahan dari produk digital mendekati nol (Rp 0)."
+            </p>
+            <div class="callout" style="font-size: 12px; margin-top: 8px;">
+              <strong>Dampak Nyata:</strong> Netflix mengeluarkan Rp 500 miliar untuk produksi 1 film, namun biaya menyiarkannya ke penonton ke-1 juta tidak memerlukan biaya pita kaset tambahan.
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Metcalfe Formula -->
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 16px; display: flex; justify-content: space-around; align-items: center;">
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-muted);">2 Pengguna</div>
+            <div style="font-weight: bold; color: var(--primary);">1 Jalur Koneksi</div>
+          </div>
+          <div style="font-size: 20px; color: var(--text-muted);">&rarr;</div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-muted);">5 Pengguna</div>
+            <div style="font-weight: bold; color: var(--primary);">10 Jalur Koneksi</div>
+          </div>
+          <div style="font-size: 20px; color: var(--text-muted);">&rarr;</div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-muted);">12 Pengguna</div>
+            <div style="font-weight: bold; color: var(--primary);">66 Jalur Koneksi</div>
+          </div>
+          <div style="font-size: 20px; color: var(--text-muted);">&rarr;</div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-muted);"><strong>1.000 Pengguna</strong></div>
+            <div style="font-weight: bold; color: var(--accent);"><strong>&approx; 500.000 Jalur Nilai!</strong></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 5: PIPELINE VS PLATFORM -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Arsitektur Model Bisnis</span>
+          <h2 class="slide-title">Pipeline Business vs Platform Business</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <!-- PIPELINE DIAGRAM -->
+          <div class="card">
+            <div class="card-title" style="color: #64748b;"><span class="card-icon">⛓️</span> 1. Bisnis Pipeline (Linier Tradisional)</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Penciptaan nilai mengalir satu arah dari produsen ke konsumen seperti pipa air.</p>
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+              <svg width="100%" height="80" viewBox="0 0 450 80">
+                <rect x="10" y="25" width="80" height="36" rx="6" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                <text x="50" y="48" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">Bahan Baku</text>
+                <path d="M 95 43 L 125 43" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+                
+                <rect x="130" y="25" width="80" height="36" rx="6" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                <text x="170" y="48" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">Pabrik</text>
+                <path d="M 215 43 L 245 43" stroke="#64748b" stroke-width="2"/>
+
+                <rect x="250" y="25" width="80" height="36" rx="6" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                <text x="290" y="48" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">Distributor</text>
+                <path d="M 335 43 L 365 43" stroke="#64748b" stroke-width="2"/>
+
+                <rect x="370" y="25" width="70" height="36" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="405" y="48" font-size="11" font-weight="bold" text-anchor="middle" fill="#991b1b">Konsumen</text>
+              </svg>
+            </div>
+            <ul class="bullet-list" style="margin-top: 12px; font-size: 13px;">
+              <li>Perusahaan memiliki dan mengendalikan semua aset & inventori secara langsung.</li>
+              <li>Pertumbuhan dibatasi oleh modal fisik dan kapasitas gudang.</li>
+            </ul>
+          </div>
+
+          <!-- PLATFORM DIAGRAM -->
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);"><span class="card-icon">🔄</span> 2. Bisnis Platform (Ekosistem Multi-Sisi)</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Perusahaan hanya menyediakan infrastruktur interaksi antara penyedia dan pengguna.</p>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px;">
+              <svg width="100%" height="80" viewBox="0 0 450 80">
+                <rect x="15" y="20" width="110" height="42" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                <text x="70" y="40" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e3a8a">PRODUSEN</text>
+                <text x="70" y="53" font-size="9" text-anchor="middle" fill="#3b82f6">(Seller / Driver)</text>
+
+                <path d="M 130 35 L 165 35" stroke="#16a34a" stroke-width="2"/>
+                <path d="M 165 48 L 130 48" stroke="#16a34a" stroke-width="2"/>
+
+                <rect x="170" y="14" width="110" height="54" rx="10" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
+                <text x="225" y="38" font-size="12" font-weight="bold" text-anchor="middle" fill="#ffffff">PLATFORM</text>
+                <text x="225" y="52" font-size="9" text-anchor="middle" fill="#f0fdf4">(Matchmaking)</text>
+
+                <path d="M 285 35 L 320 35" stroke="#16a34a" stroke-width="2"/>
+                <path d="M 320 48 L 285 48" stroke="#16a34a" stroke-width="2"/>
+
+                <rect x="325" y="20" width="110" height="42" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+                <text x="380" y="40" font-size="11" font-weight="bold" text-anchor="middle" fill="#7c2d12">KONSUMEN</text>
+                <text x="380" y="53" font-size="9" text-anchor="middle" fill="#ea580c">(Buyer / Passenger)</text>
+              </svg>
+            </div>
+            <ul class="bullet-list" style="margin-top: 12px; font-size: 13px;">
+              <li>Platform tidak memproduksi barang sendiri; platform memfasilitasi pertukaran nilai.</li>
+              <li>Pertumbuhan eksponensial karena tidak dibebani biaya pengadaan barang sendiri.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 14px;">
+          <strong>Insight untuk Mahasiswa SI:</strong> Tokopedia bukan pemilik toko, Traveloka bukan pemilik pesawat, Gojek bukan pemilik motor. Peran lulusan Sistem Informasi adalah <em>merancang algoritma dan sistem platform</em> yang mempertemukan kedua pihak dengan aman dan cepat!
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 6: ANATOMI MULTI-SIDED PLATFORM -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Diagram Arsitektur</span>
+          <h2 class="slide-title">Anatomi Ekosistem Platform Dua Sisi (Two-Sided Market)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+          <svg width="100%" height="260" viewBox="0 0 900 260">
+            <!-- SISI SUPPLY -->
+            <rect x="40" y="30" width="240" height="200" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+            <text x="160" y="60" font-size="16" font-weight="bold" fill="#1e3a8a" text-anchor="middle">SISI PASOKAN (SUPPLY)</text>
+            <text x="160" y="80" font-size="12" fill="#64748b" text-anchor="middle">Para Penyedia Nilai</text>
+            <circle cx="80" cy="120" r="14" fill="#3b82f6"/>
+            <text x="80" y="125" font-size="12" fill="#fff" text-anchor="middle">1</text>
+            <text x="105" y="125" font-size="13" fill="#1e293b">Merchant Toko / UMKM</text>
+            <circle cx="80" cy="160" r="14" fill="#3b82f6"/>
+            <text x="80" y="165" font-size="12" fill="#fff" text-anchor="middle">2</text>
+            <text x="105" y="165" font-size="13" fill="#1e293b">Mitra Pengemudi Ojol</text>
+            <circle cx="80" cy="200" r="14" fill="#3b82f6"/>
+            <text x="80" y="205" font-size="12" fill="#fff" text-anchor="middle">3</text>
+            <text x="105" y="205" font-size="13" fill="#1e293b">Restoran / Rumah Makan</text>
+
+            <!-- PLATFORM HUB DI TENGAH -->
+            <rect x="340" y="20" width="220" height="220" rx="16" fill="#1e293b" stroke="#0ea5e9" stroke-width="3"/>
+            <text x="450" y="55" font-size="18" font-weight="bold" fill="#38bdf8" text-anchor="middle">PLATFORM CORE</text>
+            <text x="450" y="75" font-size="11" fill="#94a3b8" text-anchor="middle">Algoritma & Transaksi</text>
+
+            <rect x="360" y="95" width="180" height="30" rx="6" fill="#334155"/>
+            <text x="450" y="115" font-size="12" fill="#f8fafc" text-anchor="middle">Matching Algorithm</text>
+
+            <rect x="360" y="135" width="180" height="30" rx="6" fill="#334155"/>
+            <text x="450" y="155" font-size="12" fill="#f8fafc" text-anchor="middle">Payment Gateway & Escrow</text>
+
+            <rect x="360" y="175" width="180" height="30" rx="6" fill="#334155"/>
+            <text x="450" y="195" font-size="12" fill="#f8fafc" text-anchor="middle">Rating & Trust Management</text>
+
+            <!-- SISI DEMAND -->
+            <rect x="620" y="30" width="240" height="200" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+            <text x="740" y="60" font-size="16" font-weight="bold" fill="#9a3412" text-anchor="middle">SISI PERMINTAAN (DEMAND)</text>
+            <text x="740" y="80" font-size="12" fill="#64748b" text-anchor="middle">Para Pembeli / Pengguna</text>
+            <circle cx="660" cy="120" r="14" fill="#f97316"/>
+            <text x="660" y="125" font-size="12" fill="#fff" text-anchor="middle">A</text>
+            <text x="685" y="125" font-size="13" fill="#1e293b">Pembeli Belanjaan Online</text>
+            <circle cx="660" cy="160" r="14" fill="#f97316"/>
+            <text x="660" y="165" font-size="12" fill="#fff" text-anchor="middle">B</text>
+            <text x="685" y="165" font-size="13" fill="#1e293b">Penumpang Transportasi</text>
+            <circle cx="660" cy="200" r="14" fill="#f97316"/>
+            <text x="660" y="205" font-size="12" fill="#fff" text-anchor="middle">C</text>
+            <text x="685" y="205" font-size="13" fill="#1e293b">Pencari Makanan / Foodies</text>
+
+            <!-- INTERACTION ARROWS -->
+            <path d="M 285 100 Q 310 100 335 100" stroke="#3b82f6" stroke-width="3" fill="none"/>
+            <path d="M 335 150 Q 310 150 285 150" stroke="#10b981" stroke-width="3" fill="none"/>
+            <path d="M 565 100 Q 590 100 615 100" stroke="#f97316" stroke-width="3" fill="none"/>
+            <path d="M 615 150 Q 590 150 565 150" stroke="#10b981" stroke-width="3" fill="none"/>
+          </svg>
+        </div>
+
+        <div class="callout" style="margin-top: 14px;">
+          <strong>Tugas Utama Platform Core:</strong> Menurunkan <em>Biaya Transaksi (Transaction Cost)</em> dan Biaya Pencarian (*Search Cost*) hingga mendekati nol sehingga kedua belah pihak merasa saling diuntungkan.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 7: NETWORK EFFECTS & CHICKEN-EGG -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Dinamika Pasar</span>
+          <h2 class="slide-title">Efek Jaringan & "The Chicken-and-Egg Dilemma"</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">Dilema Klasik Pembuatan Platform</div>
+            <p style="font-size: 14px; color: #334155; margin-bottom: 12px; line-height: 1.5;">
+              Jika mahasiswa membuat web marketplace baru hari ini:
+            </p>
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 14px; text-align: center;">
+              <span style="font-size: 28px;">🐔 ⟷ 🥚</span>
+              <p style="font-size: 14px; font-weight: bold; color: #9f1239; margin-top: 6px;">
+                "Pembeli tidak mau datang karena belum ada penjual.<br>
+                Penjual tidak mau daftar karena belum ada pembeli!"
+              </p>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">
+              Ini adalah tantangan terbesar saat membangun startup e-bisnis baru yang disebut <em>Cold Start Problem</em>.
+            </p>
+          </div>
+
+          <div class="card success">
+            <div class="card-title">Bagaimana Startup Memecahkannya?</div>
+            <ul class="bullet-list" style="font-size: 14px;">
+              <li>
+                <strong>1. Subsidize One Side (Bakar Uang Terarah):</strong>
+                Memberi subsidi ke salah satu sisi agar mau masuk duluan (Contoh: Gojek memberi jaket dan pulsa gratis ke driver awal).
+              </li>
+              <li>
+                <strong>2. Single-User Utility (Alat Dulu, Jaringan Kemudian):</strong>
+                Aplikasi memberi manfaat individu sebelum jaringan ramai (Contoh: Instagram awalnya cuma aplikasi filter foto bagus, baru jadi sosmed).
+              </li>
+              <li>
+                <strong>3. Marquee User Strategy:</strong>
+                Menggandeng brand besar ternama agar konsumen merasa yakin (Contoh: Mall gandeng Zara/H&M, Shopee gandeng Unilever/Samsung).
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Kesimpulan Kunci:</strong> Begitu efek jaringan melewati <em>Tipping Point (Titik Kritis)</em>, pertumbuhan platform akan bergulir seperti bola salju dan sangat sulit disaingi oleh kompetitor baru (*Winner Takes Most*).
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 8: STRATEGI BAKAR UANG -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Analisis Finansial Digital</span>
+          <h2 class="slide-title">Mengapa Platform Digital Gemar "Bakar Uang"?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: var(--danger);"><span class="card-icon">🔥</span> Mitos vs Fakta "Bakar Uang"</div>
+            <ul class="bullet-list">
+              <li><strong>Mitos Orang Awam:</strong> "Perusahaan bodoh, buang-buang modal buat bagi-bagi diskon dan voucher gratis ongkir tanpa untung."</li>
+              <li><strong>Fakta Ekonomi Platform:</strong> Ini adalah strategi <em>Customer Acquisition Cost (CAC)</em> terhitung untuk mengunci kebiasaan pengguna (*habit-forming*).</li>
+              <li>Tujuannya adalah menciptakan <em>Switching Cost</em> yang tinggi: Saat pengguna sudah terbiasa dengan kemudahan aplikasi, mereka malas berpindah ke tempat lain meskipun diskon dihentikan.</li>
+            </ul>
+          </div>
+
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);"><span class="card-icon">💰</span> Konsep Subsidized Side vs Money Side</div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Platform pintar membagi penggunanya menjadi dua:</p>
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 13px;">
+              <p>🟢 <strong>Subsidized Side (Sisi yang Dimanjakan):</strong><br>Diberi layanan gratis, promo, dan cashback agar jumlahnya membludak (Biasanya pembeli umum / pengguna gratis).</p>
+              <hr style="margin: 8px 0; border: none; border-top: 1px dashed #cbd5e1;">
+              <p>🔵 <strong>Money Side (Sisi yang Membayar):</strong><br>Pihak yang rela membayar mahal demi bisa mengakses jutaan pengguna di sisi subsidi (Merchant pengiklan, komisi transaksi, layanan analitik data).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="diagram-box" style="margin-top: 16px; background: #ffffff;">
+          <div style="font-size: 14px; font-weight: bold; color: var(--primary); margin-bottom: 6px;">
+            Contoh Riil: Google & Tokopedia
+          </div>
+          <div style="font-size: 13px; color: #475569; text-align: center;">
+            Kita menggunakan Google Search & Maps <strong>100% Gratis</strong> (Subsidized Side). Dari mana Google untung $70 Miliar? Dari <strong>Pengiklan Google Ads</strong> yang bayar per klik (Money Side)!
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 9: 4 GELOMBANG DISRUPSI -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kontekstual Indonesia</span>
+          <h2 class="slide-title">4 Gelombang Disrupsi Digital di Indonesia</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+          <!-- GELOMBANG 1 -->
+          <div class="card" style="border-top: 4px solid #3b82f6;">
+            <div style="font-size: 11px; font-weight: 800; color: #3b82f6;">GELOMBANG 1 (2010 - 2015)</div>
+            <div style="font-size: 16px; font-weight: 700; margin: 6px 0;">Retail & Marketplace</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Tokopedia, Bukalapak, Lazada</p>
+            <p style="font-size: 13px; color: #334155;">
+              Mendigitalkan ruko fisik dan pusat perbelanjaan (Tanah Abang / Glodok) menjadi katalog internet tanpa batas geografis.
+            </p>
+          </div>
+
+          <!-- GELOMBANG 2 -->
+          <div class="card" style="border-top: 4px solid #10b981;">
+            <div style="font-size: 11px; font-weight: 800; color: #10b981;">GELOMBANG 2 (2015 - 2020)</div>
+            <div style="font-size: 16px; font-weight: 700; margin: 6px 0;">Transport & On-Demand</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Gojek, Grab, Traveloka</p>
+            <p style="font-size: 13px; color: #334155;">
+              Menghilangkan negosiasi ongkos tawar-menawar di pangkalan ojek; menetapkan tarif pasti per KM berbasis GPS realtime.
+            </p>
+          </div>
+
+          <!-- GELOMBANG 3 -->
+          <div class="card" style="border-top: 4px solid #f59e0b;">
+            <div style="font-size: 11px; font-weight: 800; color: #f59e0b;">GELOMBANG 3 (2020 - 2024)</div>
+            <div style="font-size: 16px; font-weight: 700; margin: 6px 0;">Fintech & Quick Commerce</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">QRIS, Neobank, PayLater</p>
+            <p style="font-size: 13px; color: #334155;">
+              Disrupsi perbankan kantor cabang; buka tabungan cukup foto selfie KTP di kamar, dan belanja sayur sampai dalam 15 menit.
+            </p>
+          </div>
+
+          <!-- GELOMBANG 4 -->
+          <div class="card" style="border-top: 4px solid #8b5cf6;">
+            <div style="font-size: 11px; font-weight: 800; color: #8b5cf6;">GELOMBANG 4 (2025 - 2026+)</div>
+            <div style="font-size: 16px; font-weight: 700; margin: 6px 0;">AI & Social Commerce</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">TikTok Shop, Live Shopping, GenAI</p>
+            <p style="font-size: 13px; color: #334155;">
+              Batas antara media sosial hiburan dan toko belanja melebur total; rekomendasi algoritma cerdas memprediksi kebutuhan sebelum dicari.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 20px;">
+          <strong>Refleksi untuk Calon Sarjana SI:</strong> Anda lulus di era Gelombang 4! Keterampilan merancang sistem yang harus Anda miliki bukan lagi sekadar form input PHP standar, melainkan sistem cerdas yang mampu berinteraksi dengan API modern dan analitik data.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 10: PERAN AI DALAM E-BISNIS -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Tren Teknologi Terkini</span>
+          <h2 class="slide-title">Poin Tambahan: Peran AI dalam Transformasi E-Bisnis 2026</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Hyper-Personalization</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Tampilan beranda e-commerce tidak ada yang sama persis antara dua pengguna.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Menganalisis riwayat klik, durasi melihat foto, dan lokasi.</li>
+              <li>Konversi penjualan naik 30-40% karena produk yang disodorkan tepat minat pembeli.</li>
+            </ul>
+          </div>
+
+          <div class="card warning">
+            <div class="card-title">2. Dynamic Pricing Engine</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Penyesuaian harga barang secara otomatis setiap beberapa detik/menit.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Digunakan maskapai pesawat, hotel, dan tarif ojol saat hujan/jam sibuk.</li>
+              <li>Algoritma menyeimbangkan supply armada dengan lonjakan demand.</li>
+            </ul>
+          </div>
+
+          <div class="card success">
+            <div class="card-title">3. GenAI Customer Care</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Chatbot pintar berbasis Large Language Model (LLM) seperti ChatGPT.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Bisa menjawab keluhan berbahasa gaul Indonesia 24/7 tanpa emosi.</li>
+              <li>Mengurangi beban tim operasional hingga 70% dengan respon < 2 detik.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 18px;">
+          <strong>Pesan Kunci:</strong> AI dalam E-Bisnis bukan untuk menggantikan manusia, melainkan <em>mengotomasi pekerjaan repetitif</em> agar bisnis dapat melayani jutaan transaksi tanpa harus merekrut ribuan staf admin kasir.
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 11: STUDI KASUS MAHASISWA -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Aktivitas Interaktif</span>
+          <h2 class="slide-title">Studi Kasus Kelas: Digitalisasi Komoditas Lokal Kisaran</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        <div class="card" style="background: #f8fafc; border: 2px dashed #94a3b8; padding: 24px;">
+          <h3 style="color: var(--primary); font-size: 18px; margin-bottom: 10px;">
+            📌 Skenario Masalah Nyata:
+          </h3>
+          <p style="font-size: 15px; color: #334155; line-height: 1.6; margin-bottom: 16px;">
+            Kabupaten Asahan dan wilayah Kisaran sekitarnya kaya akan hasil perkebunan, kelapa sawit, hasil laut (Tanjung Balai), serta keripik/kuliner UMKM. Selama ini, petani dan pengrajin UMKM terikat pada tengkulak konvensional yang membeli dengan harga rendah dan pembayaran tempo lama.
+          </p>
+
+          <h4 style="color: var(--primary-dark); font-size: 16px; margin-bottom: 10px;">
+            💬 Tugas Diskusi Kelompok 5 Menit:
+          </h4>
+          <div class="grid-3" style="margin-top: 10px;">
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 1:</strong><br>
+              Jika Anda merancang platform digital penghubung petani lokal dengan pembeli di Medan/Jakarta, model apa yang tepat? (B2B, B2C, atau C2B?)
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 2:</strong><br>
+              Bagaimana cara mengatasi dilema telur & ayam? Siapa yang harus diajak bergabung duluan: Petaninya atau Pembelinya?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 3:</strong><br>
+              Apa peran sistem informasi dalam menjamin kualitas produk dan kepastian pembayaran di platform Anda?
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- SLIDE 12: RANGKUMAN & TAKEAWAY -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kesimpulan & Aksi</span>
+          <h2 class="slide-title">Rangkuman Kunci & Persiapan Pekan Depan</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 04 • Slide 12/12</span>
+      </div>
+      <div class="content-body">
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Takeaway Pembelajaran Hari Ini</div>
+            <ul class="bullet-list" style="font-size: 14px;">
+              <li>Ekonomi digital digerakkan oleh <strong>Hukum Moore, Hukum Metcalfe, dan Zero Marginal Cost</strong>.</li>
+              <li>Model bisnis telah bergeser dari rantai linier kaku (<strong>Pipeline</strong>) menjadi ekosistem jejaring terbuka (<strong>Platform</strong>).</li>
+              <li>Kunci kemenangan platform digital terletak pada terciptanya <strong>Efek Jaringan (Network Effects)</strong> yang kuat.</li>
+              <li>Pemenang pasar bukan yang punya aset fisik terbanyak, melainkan yang mampu mengelola <strong>data, algoritma, dan komunitas</strong> terbaik.</li>
+            </ul>
+          </div>
+
+          <div class="card highlight">
+            <div class="card-title">Preview Materi Pertemuan 05</div>
+            <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">
+              Setelah memahami logika ekonomi digital hari ini, pekan depan kita akan membedah teknologinya:
+            </p>
+            <div style="background: #eff6ff; padding: 14px; border-radius: 8px; border-left: 4px solid var(--primary-light);">
+              <h4 style="color: var(--primary); font-size: 15px; margin-bottom: 6px;">
+                "Infrastruktur & Arsitektur Teknologi E-Bisnis"
+              </h4>
+              <p style="font-size: 13px; color: #475569;">
+                Membongkar apa yang terjadi di server cloud saat tombol 'Checkout' ditekan: Arsitektur 3-Tier, Cloud Computing (IaaS/PaaS/SaaS), API Economy, dan integrasi Payment Gateway.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+          <h3 style="color: var(--primary); font-size: 20px;">Sampai Jumpa di Pertemuan 05! Terima Kasih 🙏</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Program Studi Sistem Informasi — Fakultas Ilmu Komputer, Universitas Royal</p>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <!-- BOTTOM CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">12</span>
+      <span style="font-size: 11px; margin-left: 15px; color: #64748b;"><button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button></span>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard Listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>
