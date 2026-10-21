@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight { border-top: 4px solid var(--primary); }
+    .card.warning { border-top: 4px solid var(--accent); }
+    .card.danger { border-top: 4px solid var(--danger); }
+    .card.success { border-top: 4px solid var(--success); }
+    .card.blue { border-top: 4px solid #3b82f6; }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 18px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .cover-slide {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .cover-slide .subtitle {
+      font-size: 19px;
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    .controller {
+      height: 60px;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .notes-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e2e8f0;
+      padding: 16px 30px;
+      font-size: 13px;
+      border-radius: 0 0 16px 16px;
+      border-top: 3px solid var(--accent);
+      display: none;
+      line-height: 1.6;
+    }
+    .notes-drawer.open {
+      display: block;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    table.data-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Fakultas Ilmu Komputer</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 01:<br>Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok</h1>
+      <p class="subtitle">Evolusi Bisnis Digital dari Era Mainframe hingga AI Ecosystem, Perbedaan Fundamental E-Commerce vs E-Business, dan 7 Elemen Pokok.</p>
+      <div style="font-size: 16px; color: #f8fafc; margin-top: 18px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">
+        Program Studi Sistem Informasi — Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.12); border-left-color: var(--accent); color: #f8fafc; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau tombol di bawah untuk berpindah slide.</em>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Kontrak Perkuliahan -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kontrak Perkuliahan</span>
+          <h2 class="slide-title">Kontrak Kuliah & Bobot Penilaian OBE (SIKB 7226)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">📋</span> Bobot Evaluasi Semester</div>
+            <ul class="bullet-list">
+              <li><strong>Keaktifan & Diskusi Kelas:</strong> 10% (Partisipasi tanya-jawab)</li>
+              <li><strong>Tugas Terstruktur & Kuis:</strong> 15% (Analisis kasus studi)</li>
+              <li><strong>Ujian Tengah Semester (UTS):</strong> 15% (Ujian analisis sistem)</li>
+              <li><strong>Tugas PBL (Proyek Kelompok):</strong> 25% (Rancang bangun sistem web)</li>
+              <li><strong>Ujian Akhir Semester (UAS):</strong> 35% (Laporan & demo sistem akhir)</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">🎯</span> Target Capaian (CPMK)</div>
+            <ul class="bullet-list">
+              <li><strong>CPMK 09.1:</strong> Mampu menjelaskan konsep dasar, komponen, dan peran SI dalam proses bisnis organisasi.</li>
+              <li><strong>CPMK 06.1:</strong> Mampu menganalisis kebutuhan strategis organisasi terhadap SI.</li>
+              <li><strong>CPMK 06.2:</strong> Mampu merancang pemodelan e-bisnis (WSDM) dan mengintegrasikan sistem pembayaran (e-payment).</li>
+              <li><strong>CPMK 06.3:</strong> Mampu mengevaluasi performa sistem berbasis Critical Success Factors (CSF).</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Apersepsi & Refleksi -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi & Refleksi</span>
+          <h2 class="slide-title">Konter Tiket Bandara vs Traveloka: Apa yang Sebenarnya Berubah?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">🏢</span> Pembelian Tiket Tradisional (Tahun 2000)</div>
+            <ul class="bullet-list">
+              <li>Calon penumpang wajib datang fisik ke konter agen travel atau bandara.</li>
+              <li>Petugas mengetik manual, mencetak tiket kertas berseri, dan menerima uang tunai fisik.</li>
+              <li>Dibatasi jam kerja kantor (08.00 - 17.00) dan kapasitas antrean ruang tunggu fisik.</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">📱</span> Pembelian Era E-Bisnis (Traveloka/Tiket.com)</div>
+            <ul class="bullet-list">
+              <li>Bisa memesan tiket jam 3 subuh dari kasur kamar tidur lewat smartphone.</li>
+              <li>Tiket digital langsung terbit berupa QR Code E-Boarding Pass dalam 2 detik.</li>
+              <li>Pembayaran diverifikasi otomatis via Virtual Account / QRIS tanpa kasir manusia.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Pertanyaan ke Mahasiswa:</strong> "Apakah Traveloka hanya sekadar membuat website pemesanan, atau mereka merombak SELURUH proses bisnis maskapai dari hulu ke hilir?"
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Garis Waktu Sejarah -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Garis Waktu Sejarah</span>
+          <h2 class="slide-title">Evolusi E-Bisnis dari Dekade ke Dekade (1970 - 2026)</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 18px;">
+          <svg width="100%" height="220" viewBox="0 0 850 220">
+            <line x1="50" y1="110" x2="800" y2="110" stroke="#0f172a" stroke-width="4"/>
+
+            <!-- Node 1 -->
+            <circle cx="90" cy="110" r="14" fill="#3b82f6"/>
+            <text x="90" y="80" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">1970-an</text>
+            <text x="90" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">EFT</text>
+            <text x="90" y="145" font-size="10" fill="#334155" text-anchor="middle">Transfer Dana</text>
+            <text x="90" y="160" font-size="10" fill="#334155" text-anchor="middle">Antar Bank Mainframe</text>
+
+            <!-- Node 2 -->
+            <circle cx="230" cy="110" r="14" fill="#10b981"/>
+            <text x="230" y="80" font-size="12" font-weight="bold" fill="#166534" text-anchor="middle">1980-an</text>
+            <text x="230" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">EDI</text>
+            <text x="230" y="145" font-size="10" fill="#334155" text-anchor="middle">Tukar Dokumen</text>
+            <text x="230" y="160" font-size="10" fill="#334155" text-anchor="middle">Faktur & PO Digital</text>
+
+            <!-- Node 3 -->
+            <circle cx="370" cy="110" r="14" fill="#f59e0b"/>
+            <text x="370" y="80" font-size="12" font-weight="bold" fill="#92400e" text-anchor="middle">1990-an</text>
+            <text x="370" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">WWW</text>
+            <text x="370" y="145" font-size="10" fill="#334155" text-anchor="middle">Kelahiran Web</text>
+            <text x="370" y="160" font-size="10" fill="#334155" text-anchor="middle">Amazon & eBay Awal</text>
+
+            <!-- Node 4 -->
+            <circle cx="510" cy="110" r="14" fill="#8b5cf6"/>
+            <text x="510" y="80" font-size="12" font-weight="bold" fill="#6b21a8" text-anchor="middle">2000-an</text>
+            <text x="510" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">DOTCOM</text>
+            <text x="510" y="145" font-size="10" fill="#334155" text-anchor="middle">Ledakan Portal</text>
+            <text x="510" y="160" font-size="10" fill="#334155" text-anchor="middle">Marketplace B2C</text>
+
+            <!-- Node 5 -->
+            <circle cx="650" cy="110" r="14" fill="#ec4899"/>
+            <text x="650" y="80" font-size="12" font-weight="bold" fill="#be185d" text-anchor="middle">2010-an</text>
+            <text x="650" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">MOBILE</text>
+            <text x="650" y="145" font-size="10" fill="#334155" text-anchor="middle">Era Smartphone</text>
+            <text x="650" y="160" font-size="10" fill="#334155" text-anchor="middle">Gojek, Tokopedia, OVO</text>
+
+            <!-- Node 6 -->
+            <circle cx="770" cy="110" r="14" fill="#ef4444"/>
+            <text x="770" y="80" font-size="12" font-weight="bold" fill="#991b1b" text-anchor="middle">2026+</text>
+            <text x="770" y="95" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">AI & ECOSYSTEM</text>
+            <text x="770" y="145" font-size="10" fill="#334155" text-anchor="middle">Hyper-Personalized</text>
+            <text x="770" y="160" font-size="10" fill="#334155" text-anchor="middle">Social Commerce</text>
+          </svg>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Konseptual Utama -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Konseptual Utama</span>
+          <h2 class="slide-title">Perbedaan Fundamental: E-Commerce vs E-Business</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <!-- DIAGRAM KONSENTRIS -->
+          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+            <svg width="100%" height="240" viewBox="0 0 450 240">
+              <!-- Outer Circle: E-Business -->
+              <rect x="15" y="10" width="420" height="220" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+              <text x="225" y="38" font-size="14" font-weight="bold" fill="#0369a1" text-anchor="middle">LINGKUP UTAMA: E-BUSINESS</text>
+              <text x="75" y="70" font-size="11" fill="#0369a1">• SCM (Rantai Pasok)</text>
+              <text x="75" y="90" font-size="11" fill="#0369a1">• ERP (Database Pusat)</text>
+              <text x="75" y="110" font-size="11" fill="#0369a1">• CRM (Layanan Pelanggan)</text>
+              <text x="320" y="70" font-size="11" fill="#0369a1">• R&D Produk Baru</text>
+              <text x="320" y="90" font-size="11" fill="#0369a1">• HR & Kolaborasi Tim</text>
+              <text x="320" y="110" font-size="11" fill="#0369a1">• Analitik Data / BI</text>
+
+              <!-- Inner Circle: E-Commerce -->
+              <rect x="90" y="130" width="270" height="85" rx="12" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+              <text x="225" y="155" font-size="12" font-weight="bold" fill="#c2410c" text-anchor="middle">SUBSET: E-COMMERCE</text>
+              <text x="225" y="175" font-size="10" fill="#9a3412" text-anchor="middle">• Transaksi Jual - Beli Barang Online</text>
+              <text x="225" y="195" font-size="10" fill="#9a3412" text-anchor="middle">• Pembayaran Kasir Digital & Pemesanan</text>
+            </svg>
+          </div>
+          <!-- EXPLANATION -->
+          <div class="card highlight">
+            <div class="card-title">Rumus Ingatan Singkat:</div>
+            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 12px; text-align: center;">
+              <code style="font-size: 15px; font-weight: bold; color: var(--primary);">
+                E-Commerce &sub; E-Business
+              </code>
+            </div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>E-Commerce:</strong> Hanya berfokus pada <em>transaksi luar (eksternal)</em> antara pembeli dan penjual (pertukaran uang dengan barang).</li>
+              <li><strong>E-Business:</strong> Mencakup seluruh <em>proses bisnis internal dan eksternal</em>: dari pengadaan bahan baku di pabrik (SCM), pembukuan akuntansi (ERP), kepuasan pelanggan (CRM), hingga kolaborasi karyawan via cloud.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Modul KB 2 -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Modul KB 2</span>
+          <h2 class="slide-title">7 Elemen Pokok dalam Sistem E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        
+        <p style="font-size: 13px; color: #475569; margin-bottom: 14px;">
+          Berdasarkan Modul E-Bisnis 2026 (Kegiatan Belajar 2), sebuah e-bisnis yang sukses ditopang oleh 7 elemen kunci:
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+          <div class="card highlight">
+            <div style="font-size: 11px; font-weight: bold; color: var(--primary);">ELEMEN 1</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Competitive Strategy</div>
+            <p style="font-size: 11px; color: #475569;">Strategi memenangkan persaingan pasar secara sehat dan berjangka panjang.</p>
+          </div>
+          <div class="card warning">
+            <div style="font-size: 11px; font-weight: bold; color: var(--accent);">ELEMEN 2</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Business Strategy</div>
+            <p style="font-size: 11px; color: #475569;">Arah tujuan perusahaan dalam mencapai target laba dan pertumbuhan aset.</p>
+          </div>
+          <div class="card success">
+            <div style="font-size: 11px; font-weight: bold; color: var(--success);">ELEMEN 3</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Value Chain</div>
+            <p style="font-size: 11px; color: #475569;">Rangkaian aktivitas penciptaan nilai tambah produk dari bahan mentah ke konsumen.</p>
+          </div>
+          <div class="card blue">
+            <div style="font-size: 11px; font-weight: bold; color: #3b82f6;">ELEMEN 4</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Employees</div>
+            <p style="font-size: 11px; color: #475569;">Kesiapan kompetensi talenta digital dan budaya adaptasi kerja SDM.</p>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px;">
+          <div class="card">
+            <div style="font-size: 11px; font-weight: bold; color: #64748b;">ELEMEN 5</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Customers</div>
+            <p style="font-size: 11px; color: #475569;">Fokus utama kepuasan pengguna (Customer-Centric) dan retensi loyalitas.</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 11px; font-weight: bold; color: #64748b;">ELEMEN 6</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Market Segments</div>
+            <p style="font-size: 11px; color: #475569;">Spesifikasi target ceruk pasar yang dibidik secara tajam dan terukur.</p>
+          </div>
+          <div class="card">
+            <div style="font-size: 11px; font-weight: bold; color: #64748b;">ELEMEN 7</div>
+            <div style="font-size: 14px; font-weight: 700; margin: 4px 0;">Business Units</div>
+            <p style="font-size: 11px; color: #475569;">Sinergi harmonis antar divisi operasional, keuangan, gudang, dan IT.</p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Strategi Bersaing -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Strategi Bersaing</span>
+          <h2 class="slide-title">Competitive Strategy: Cost Leadership vs Diferensiasi</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">1. Strategi Kepemimpinan Biaya (Cost Leadership)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Memanfaatkan efisiensi teknologi informasi untuk menawarkan harga paling murah di pasar.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Mengotomasi proses admin gudang agar biaya tenaga kerja berkurang drastis.</li>
+              <li>Membeli langsung dari pabrik dalam jumlah raksasa tanpa perantara distributor.</li>
+              <li><strong>Contoh Nyata:</strong> Xiaomi (margin tipis tapi volume raksasa), Shopee (promo subsidi ongkir masif).</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Strategi Diferensiasi (Differentiation)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Menawarkan nilai unik, eksklusivitas, dan pengalaman belanja mewah yang tidak bisa ditiru kompetitor.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Tidak bersaing di perang harga murah; konsumen rela membayar mahal karena kualitas.</li>
+              <li>Fitur UI/UX eksklusif, garansi resmi tanpa ribet, dan layanan pelanggan VIP.</li>
+              <li><strong>Contoh Nyata:</strong> Apple (ekosistem iOS eksklusif), Tokopedia Official Store (jaminan ori 100%).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>Peringatan Bisnis:</strong> Bisnis yang berbahaya adalah yang <em>"Stuck in the Middle"</em> (Murah tidak, mewah pun tidak). Mahasiswa harus memilih posisi yang jelas saat merancang ide bisnis PBL!
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Faktor Manusia -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Faktor Manusia</span>
+          <h2 class="slide-title">Employees & Culture: Mengapa IT Saja Tidak Cukup?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card danger">
+            <div class="card-title"><span class="card-icon">⚠️</span> Kesalahan Fatal Pemilik Bisnis</div>
+            <ul class="bullet-list">
+              <li>Membeli software ERP atau web e-commerce seharga ratusan juta, tapi karyawannya tidak pernah dilatih cara menggunakannya.</li>
+              <li>Karyawan merasa terancam posisinya akan digantikan oleh robot komputer, sehingga secara diam-diam menyabotase sistem baru.</li>
+              <li>Data input lambat dan asal-asalan, mengakibatkan laporan keuangan tetap salah.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">🚀</span> Membangun Digital Mindset Organisasi</div>
+            <ul class="bullet-list">
+              <li><strong>Upskilling Berkala:</strong> Melatih staf gudang menggunakan scanner barcode dan admin kasir mengoperasikan dashboard web.</li>
+              <li><strong>SOP Digital yang Disiplin:</strong> Menghilangkan kebiasaan mencatat nota manual di kertas bon robek.</li>
+              <li><strong>Kolektif Kolaboratif:</strong> Menjadikan teknologi sebagai alat bantu kerja yang meringankan stres, bukan ancaman PHK.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Studi Kasus Korporat -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Studi Kasus Korporat</span>
+          <h2 class="slide-title">Transformasi IBM: Dari Pabrik Komputer Menjadi Pelopor E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: #64748b;">IBM Tahun 1980 - 1990</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+              IBM adalah produsen komputer mainframe dan PC raksasa dunia. Namun di awal 1990-an, mereka merugi miliaran dolar karena kalah bersaing harga dengan produsen PC murah Asia.
+            </p>
+            <div style="background: #fee2e2; padding: 10px; border-radius: 6px; font-size: 12px; color: #991b1b;">
+              Krisis besar: Perusahaan perangkat keras (hardware) konvensional mulai kehilangan relevansi di pasar global.
+            </div>
+          </div>
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);">Kelahiran Konsep E-Business (1997)</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+              CEO Lou Gerstner memutar haluan IBM secara radikal. IBM adalah <strong>perusahaan pertama di dunia yang mempopulerkan istilah 'e-business'</strong> ke jagat industri global.
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>IBM menjual divisi laptop PC-nya (ThinkPad) ke Lenovo.</li>
+              <li>IBM beralih 100% menjadi penyedia solusi konsultan integrasi sistem, server cloud, dan transformasi digital korporat.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 14px;">
+          <strong>Pelajaran Utama:</strong> Bisnis yang bertahan bukan yang paling kuat fisiknya, melainkan yang paling cepat beradaptasi dengan gelombang transformasi digital!
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Fenomena Nasional -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Fenomena Nasional</span>
+          <h2 class="slide-title">SuperApp Indonesia: Bagaimana GoTo & Grab Memadukan 7 Elemen</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Transport & Food</div>
+            <p style="font-size: 12px; color: #475569;">
+              Menghubungkan ratusan ribu mitra pengemudi dengan jutaan pemesan makanan dan penumpang harian.
+            </p>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Finansial & Dompet</div>
+            <p style="font-size: 12px; color: #475569;">
+              GoPay menjadi ekosistem pembayaran independen untuk belanja di toko fisik, minimarket, hingga bayar tagihan listrik PLN.
+            </p>
+          </div>
+          <div class="card success">
+            <div class="card-title">3. E-Commerce & Logistik</div>
+            <p style="font-size: 12px; color: #475569;">
+              Merger Gojek & Tokopedia (GoTo) memungkinkan pengiriman barang kilat instan (2 jam sampai) menggunakan armada ojek motor.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 16px; background: #f8fafc; border: 1px solid var(--border);">
+          <div style="font-size: 14px; font-weight: bold; color: var(--primary); margin-bottom: 6px;">
+            Kekuatan Sinergi Lintas Unit Bisnis (Elemen 7: Business Units):
+          </div>
+          <p style="font-size: 13px; color: #334155; line-height: 1.5;">
+            Pengguna memesan nasi goreng di GoFood &rarr; bayar pakai GoPay &rarr; diantar mitra GoRide &rarr; driver belanja bensin di SPBU pakai QRIS GoPay. <strong>Uang dan data berputar di dalam satu ekosistem tanpa pernah keluar!</strong>
+          </p>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Praktik Kelas -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Praktik Kelas</span>
+          <h2 class="slide-title">Latihan Analisis: Mentransformasi Bisnis Ritel Menjadi E-Bisnis</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="card" style="background: #f8fafc; border: 2px dashed #94a3b8; padding: 22px;">
+          <h3 style="color: var(--primary); font-size: 17px; margin-bottom: 8px;">
+            📌 Skenario Kasus: Toko Oleh-Oleh Khas Asahan "Bolu Salak Mantap"
+          </h3>
+          <p style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 14px;">
+            Toko oleh-oleh di Kisaran selama ini hanya mengandalkan pembeli mobil yang singgah di jalan lintas Sumatera. Pemilik ingin bertransformasi menjadi bisnis digital penuh agar kuenya bisa dipesan pelanggan dari Medan, Rantauprapat, dan Pekanbaru.
+          </p>
+          <div class="grid-3">
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 1 (Produk Basi):</strong><br>
+              Bolu salak hanya tahan 4 hari. Bagaimana rantai nilai (Value Chain) pengiriman harus dirancang?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 2 (Strategi Bersaing):</strong><br>
+              Apakah toko ini harus pakai strategi Cost Leadership (perang murah) atau Diferensiasi?
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Tantangan 3 (SDM Toko):</strong><br>
+              Bagaimana melatih staf dapur dan kasir yang belum terbiasa dengan orderan online?
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Kesimpulan & Glosarium -->
+    <div class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kesimpulan & Glosarium</span>
+          <h2 class="slide-title">Rangkuman Pertemuan 01 & Glosarium Istilah Penting</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 01 - Pengantar E-Bisnis, Kontrak Kuliah & 7 Elemen Pokok • Slide 12/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Takeaway Pembelajaran Pertemuan 01</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>E-Commerce adalah transaksi jual-beli, sedangkan <strong>E-Business mencakup seluruh transformasi proses organisasi</strong>.</li>
+              <li>Evolusi teknologi telah bergerak dari mainframe 1970 (EFT) menuju ekosistem AI cerdas 2026.</li>
+              <li>Sebuah bisnis digital wajib mengintegrasikan <strong>7 Elemen Pokok</strong> secara harmonis.</li>
+              <li>Kunci kemenangan bukan cuma pada teknologi (IT), melainkan kesiapan strategi dan budaya orangnya (*Employees*).</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">📖 Glosarium Istilah Penting Dosen</div>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li><strong>EFT:</strong> Pengiriman uang elektronik antar bank berbasis komputer mainframe (1970).</li>
+              <li><strong>EDI:</strong> Format baku pertukaran dokumen transaksi digital antar korporasi (1980).</li>
+              <li><strong>Value Chain:</strong> Urutan rantai kegiatan bisnis yang memberi nilai tambah bagi produk.</li>
+              <li><strong>SuperApp:</strong> Aplikasi terintegrasi yang menyediakan puluhan layanan dalam 1 platform.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+          <h3 style="color: var(--primary); font-size: 18px;">Pekan Depan: Pertemuan 02 - Taksonomi & Model Bisnis E-Business (B2B, B2C, C2C, C2B)</h3>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">12</span> <button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+        activeSlide.scrollTop = 0;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>

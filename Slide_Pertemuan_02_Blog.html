@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertemuan 02 - Taksonomi & Model Bisnis E-Business</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 92vw;
+      max-width: 1200px;
+      height: 84vh;
+      max-height: 720px;
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .card.highlight { border-top: 4px solid var(--primary); }
+    .card.warning { border-top: 4px solid var(--accent); }
+    .card.danger { border-top: 4px solid var(--danger); }
+    .card.success { border-top: 4px solid var(--success); }
+    .card.blue { border-top: 4px solid #3b82f6; }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    ul.bullet-list li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 18px;
+      position: absolute;
+      left: 6px;
+      top: -3px;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .cover-slide {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-slide .slide-title {
+      color: white;
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+    .cover-slide .subtitle {
+      font-size: 19px;
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      max-width: 800px;
+    }
+    .badge-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    .controller {
+      height: 60px;
+      background: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .slide-counter {
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .notes-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e2e8f0;
+      padding: 16px 30px;
+      font-size: 13px;
+      border-radius: 0 0 16px 16px;
+      border-top: 3px solid var(--accent);
+      display: none;
+      line-height: 1.6;
+    }
+    .notes-drawer.open {
+      display: block;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    table.data-table th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide cover-slide active" data-slide="1">
+      <div class="badge-group">
+        <span class="badge">Mata Kuliah: E-Bisnis</span>
+        <span class="badge">Kode: SIKB 7226</span>
+        <span class="badge">Fakultas Ilmu Komputer</span>
+      </div>
+      <h1 class="slide-title">PERTEMUAN 02:<br>Taksonomi & Model Bisnis E-Business</h1>
+      <p class="subtitle">Klasifikasi Interaksi Pelaku Pasar (B2B, B2C, C2C, C2B, B2G), Model Pendapatan (Revenue Streams), dan Fenomena Social Commerce.</p>
+      <div style="font-size: 16px; color: #f8fafc; margin-top: 18px;">
+        <strong>Dosen Pengampu:</strong> Akmal Nasution, M.Kom.
+      </div>
+      <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">
+        Program Studi Sistem Informasi — Universitas Royal Kisaran
+      </div>
+      <div class="callout" style="background: rgba(255,255,255,0.12); border-left-color: var(--accent); color: #f8fafc; margin-top: 25px;">
+        💡 <em>Petunjuk: Gunakan tombol Panah Kanan/Kiri pada keyboard atau tombol di bawah untuk berpindah slide.</em>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Apersepsi -->
+    <div class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Apersepsi</span>
+          <h2 class="slide-title">Berapa Banyak Model Bisnis di Smartphone Anda?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 2/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">📱 Belanja Sepatu di Shopee</div>
+            <p style="font-size: 13px; color: #475569;">
+              Anda membeli sepatu dari toko ritel resmi seharga Rp 300.000.
+            </p>
+            <div style="font-size: 12px; font-weight: bold; color: var(--primary); margin-top: 8px;">
+              Model: Business-to-Consumer (B2C)
+            </div>
+          </div>
+          <div class="card warning">
+            <div class="card-title">📱 Beli HP Bekas di OLX</div>
+            <p style="font-size: 13px; color: #475569;">
+              Anda membeli iPhone bekas langsung dari mahasiswa lain di kampus.
+            </p>
+            <div style="font-size: 12px; font-weight: bold; color: var(--accent); margin-top: 8px;">
+              Model: Consumer-to-Consumer (C2C)
+            </div>
+          </div>
+          <div class="card success">
+            <div class="card-title">📱 Jual Desain di Shutterstock</div>
+            <p style="font-size: 13px; color: #475569;">
+              Mahasiswa jago desain mengunggah logo untuk dibeli perusahaan luar negeri.
+            </p>
+            <div style="font-size: 12px; font-weight: bold; color: var(--success); margin-top: 8px;">
+              Model: Consumer-to-Business (C2B)
+            </div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 20px;">
+          <strong>Poin Pembelajaran:</strong> Dalam satu genggaman HP, kita bisa berperan sebagai <em>konsumen, penjual, maupun penyedia jasa bagi korporasi</em>!
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Matriks Klasifikasi -->
+    <div class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Matriks Klasifikasi</span>
+          <h2 class="slide-title">Matriks Kuadran Interaksi Pelaku Transaksi Digital</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 3/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <!-- QUADRANT SVG -->
+          <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+            <svg width="100%" height="250" viewBox="0 0 450 250">
+              <!-- Y Axis Label -->
+              <text x="15" y="125" font-size="11" font-weight="bold" fill="#0f172a" transform="rotate(-90 15,125)" text-anchor="middle">ASAL TRANSAKSI (DARI) &rarr;</text>
+              <!-- X Axis Label -->
+              <text x="240" y="240" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">TUJUAN TRANSAKSI (KEPADA) &rarr;</text>
+
+              <!-- Top Left: B2B -->
+              <rect x="50" y="20" width="180" height="90" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+              <text x="140" y="50" font-size="14" font-weight="bold" fill="#1e40af" text-anchor="middle">B2B</text>
+              <text x="140" y="70" font-size="10" fill="#475569" text-anchor="middle">(Business to Business)</text>
+              <text x="140" y="88" font-size="9" fill="#2563eb" text-anchor="middle">Ralali, Indonetwork, Mbiz</text>
+
+              <!-- Top Right: B2C -->
+              <rect x="240" y="20" width="180" height="90" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+              <text x="330" y="50" font-size="14" font-weight="bold" fill="#166534" text-anchor="middle">B2C</text>
+              <text x="330" y="70" font-size="10" fill="#475569" text-anchor="middle">(Business to Consumer)</text>
+              <text x="330" y="88" font-size="9" fill="#16a34a" text-anchor="middle">Blibli, KlikIndomaret, Netflix</text>
+
+              <!-- Bottom Left: C2B -->
+              <rect x="50" y="120" width="180" height="90" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+              <text x="140" y="150" font-size="14" font-weight="bold" fill="#9a3412" text-anchor="middle">C2B</text>
+              <text x="140" y="170" font-size="10" fill="#475569" text-anchor="middle">(Consumer to Business)</text>
+              <text x="140" y="188" font-size="9" fill="#ea580c" text-anchor="middle">Fiverr, Fastwork, Influencer</text>
+
+              <!-- Bottom Right: C2C -->
+              <rect x="240" y="120" width="180" height="90" rx="8" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+              <text x="330" y="150" font-size="14" font-weight="bold" fill="#6b21a8" text-anchor="middle">C2C</text>
+              <text x="330" y="170" font-size="10" fill="#475569" text-anchor="middle">(Consumer to Consumer)</text>
+              <text x="330" y="188" font-size="9" fill="#9333ea" text-anchor="middle">OLX, Carousell, Tokopedia P2P</text>
+            </svg>
+          </div>
+          <!-- EXPLANATION -->
+          <div class="card highlight">
+            <div class="card-title">Cara Mudah Memahami:</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Huruf Depan:</strong> Siapa yang *membuat/menjual* nilai atau produk.</li>
+              <li><strong>Huruf Belakang:</strong> Siapa yang *membeli/menerima* produk tersebut.</li>
+              <li><strong>B (Business):</strong> Perusahaan berbadan hukum / toko komersial.</li>
+              <li><strong>C (Consumer):</strong> Perorangan / individu masyarakat.</li>
+              <li><strong>G (Government):</strong> Lembaga instansi pemerintah (B2G / G2C).</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Komparasi Mendalam -->
+    <div class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Komparasi Mendalam</span>
+          <h2 class="slide-title">B2B vs B2C: Dua Dunia yang Sangat Berbeda</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 4/12</span>
+      </div>
+      <div class="content-body">
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Dimensi Perbedaan</th>
+              <th>B2B (Business-to-Business)</th>
+              <th>B2C (Business-to-Consumer)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Volume & Nilai Transaksi</strong></td>
+              <td>Sangat besar (Grosir kontainer, ratusan juta s/d miliaran)</td>
+              <td>Kecil eceran (Satuan unit, puluhan s/d ratusan ribu rupiah)</td>
+            </tr>
+            <tr>
+              <td><strong>Proses Pengambilan Keputusan</strong></td>
+              <td>Rasional, bertahap, butuh persetujuan manajer / tanda tangan PO</td>
+              <td>Spontan, emosional, dipengaruhi promo diskon atau tren FYP TikTok</td>
+            </tr>
+            <tr>
+              <td><strong>Metode Pembayaran</strong></td>
+              <td>Invoice jatuh tempo (Term of Payment 30/60 hari), Letter of Credit</td>
+              <td>Seketika (Virtual Account, QRIS, E-Wallet, Kartu Kredit)</td>
+            </tr>
+            <tr>
+              <td><strong>Hubungan Pelanggan</strong></td>
+              <td>Jangka panjang, kontrak kerja sama tahunan yang intensif</td>
+              <td>Transaksional cepat, mudah berpindah ke toko saingan</td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Tren Modern -->
+    <div class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Tren Modern</span>
+          <h2 class="slide-title">Fenomena C2C & Kebangkitan Ekonomi C2B</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 5/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title">1. C2C (Consumer-to-Consumer)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Masyarakat saling jual-beli barang bekas (*Pre-loved*) atau kerajinan tangan individu:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Platform seperti OLX dan forum jual beli mempertemukan penjual dan pembeli perorangan.</li>
+              <li><strong>Tantangan Terbesar:</strong> Kepercayaan dan penipuan! Solusinya adalah penggunaan fitur *Rekening Bersama (Escrow)* dari platform.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title">2. C2B (Consumer-to-Business)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Era di mana perusahaan yang berburu keahlian masyarakat perorangan:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Freelance Marketplace:</strong> Programmer atau desainer lepas di Fastwork / Fiverr dibayar perusahaan untuk membuat website.</li>
+              <li><strong>Influencer & Content Creator:</strong> Brand kosmetik membayar selebgram TikTok untuk mempromosikan produknya (*Endorsement*).</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Sektor Publik -->
+    <div class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Sektor Publik</span>
+          <h2 class="slide-title">Interaksi Pemerintah: Model B2G & G2C di Indonesia</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 6/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card warning">
+            <div class="card-title"><span class="card-icon">🏛️</span> 1. B2G (Business-to-Government)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Pengadaan barang dan jasa instansi pemerintah oleh vendor swasta secara digital:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>LPSE (Layanan Pengadaan Secara Elektronik):</strong> Tender proyek jembatan, gedung, dan jaringan komputer secara transparan online.</li>
+              <li><strong>e-Katalog LKPP:</strong> "Marketplace resmi pemerintah" di mana kementerian dan dinas daerah membeli laptop, seragam, dan alat tulis.</li>
+            </ul>
+          </div>
+          <div class="card blue">
+            <div class="card-title"><span class="card-icon">👥</span> 2. G2C (Government-to-Citizen)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 8px;">
+              Layanan birokrasi pemerintahan kepada masyarakat berbasis aplikasi:
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>DJP Online:</strong> Lapor SPT pajak tahunan dari laptop tanpa antre di kantor pajak.</li>
+              <li><strong>Mobile JKN (BPJS):</strong> Pendaftaran faskes dan antrean dokter online.</li>
+              <li><strong>Aplikasi SIGNAL:</strong> Bayar pajak STNK kendaraan bermotor dari smartphone.</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Konvergensi Saluran -->
+    <div class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Konvergensi Saluran</span>
+          <h2 class="slide-title">Model O2O: Menggabungkan Toko Fisik dan Online</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 7/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card highlight">
+            <div class="card-title"><span class="card-icon">🏪</span> Online-to-Offline (O2O)</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px;">
+              Strategi menarik pelanggan dari dunia online untuk datang dan bertransaksi di gerai fisik nyata (atau sebaliknya).
+            </p>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>BOPIS (Buy Online, Pick-up In Store):</strong> Belanja susu dan sabun di aplikasi *Klik Indomaret*, lalu ambil barangnya langsung di kasir Indomaret dekat rumah tanpa antre keliling rak.</li>
+              <li><strong>Voucher Makan Diskon:</strong> Beli kupon diskon steak di aplikasi Chope/Fave, lalu santap makanannya di restoran fisik.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <div class="card-title"><span class="card-icon">⚡</span> Mengapa O2O Sangat Populer?</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Hemat Biaya Ongkir:</strong> Pembeli tidak perlu membayar ongkos kirim ekspedisi.</li>
+              <li><strong>Barang Cepat di Tangan:</strong> Bisa langsung diambil 15 menit setelah pesanan masuk.</li>
+              <li><strong>Cross-Selling di Toko Fisik:</strong> Saat mengambil barang ke minimarket, pembeli sering tergoda membeli camilan atau minuman dingin tambahan di kasir!</li>
+            </ul>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Monetisasi Digital -->
+    <div class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Monetisasi Digital</span>
+          <h2 class="slide-title">5 Model Pendapatan (Revenue Streams) Platform Digital</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 8/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-3">
+          <div class="card highlight">
+            <div class="card-title">1. Komisi Transaksi</div>
+            <p style="font-size: 12px; color: var(--primary); font-weight: bold;">(Take Rate 2% - 6%)</p>
+            <p style="font-size: 13px; color: #475569; margin-top: 6px;">
+              Tokopedia dan Shopee memotong persentase fee setiap ada barang yang laku terjual oleh merchant.
+            </p>
+          </div>
+          <div class="card warning">
+            <div class="card-title">2. Berlangganan (SaaS)</div>
+            <p style="font-size: 12px; color: var(--accent); font-weight: bold;">(Subscription Monthly)</p>
+            <p style="font-size: 13px; color: #475569; margin-top: 6px;">
+              Netflix, Spotify, Shopify menarik biaya sewa akses rutin setiap bulan dari kartu kredit/rekening pengguna.
+            </p>
+          </div>
+          <div class="card success">
+            <div class="card-title">3. Model Freemium</div>
+            <p style="font-size: 12px; color: var(--success); font-weight: bold;">(Gratis Dasar, Bayar Pro)</p>
+            <p style="font-size: 13px; color: #475569; margin-top: 6px;">
+              Canva dan Google Drive gratis dipakai, tapi bayar jika ingin aset gambar premium atau storage 100 GB.
+            </p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 14px;">
+          <div class="card blue">
+            <div class="card-title">4. Iklan Digital (AdTech)</div>
+            <p style="font-size: 13px; color: #475569;">
+              Google Ads, Facebook Ads, dan TikTok Ads menarik bayaran dari pengiklan berbasis klik (*Pay-Per-Click*) atau tayangan (*Impression*).
+            </p>
+          </div>
+          <div class="card" style="border-top: 4px solid #a855f7;">
+            <div class="card-title">5. Listing Fee / Fitur Berbayar</div>
+            <p style="font-size: 13px; color: #475569;">
+              OLX menarik bayaran jika penjual mobil ingin iklannya selalu tampil di urutan paling atas (*Top Ads / Highlighted*).
+            </p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Disrupsi Terkini -->
+    <div class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Disrupsi Terkini</span>
+          <h2 class="slide-title">Social Commerce: Mengapa TikTok Shop Sangat Digandrungi?</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 9/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="color: #64748b;">E-Commerce Tradisional (Search-Based)</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">
+              Pembeli membuka web hanya saat <strong>sudah punya niat beli</strong> barang tertentu.
+            </p>
+            <div style="background: #f1f5f9; padding: 10px; border-radius: 6px; font-size: 12px; line-height: 1.5;">
+              Buka aplikasi Tokopedia &rarr; Ketik "Sepatu Futsal Size 42" di kolom pencarian &rarr; Bandingkan harga &rarr; Checkout.
+            </div>
+          </div>
+          <div class="card highlight">
+            <div class="card-title" style="color: var(--primary);">Social Commerce (Discovery-Based)</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">
+              Pembeli awalnya <strong>cuma cari hiburan video lucu</strong>, lalu terhipnotis membeli barang!
+            </p>
+            <div style="background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 12px; line-height: 1.5;">
+              Scroll video FYP TikTok &rarr; Nonton live streaming penjual yang heboh &rarr; Muncul keranjang kuning &rarr; Beli dalam 3 detik!
+            </div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top: 14px;">
+          <strong>Kunci Kemenangan Social Commerce:</strong> Memangkas jarak antara *hiburan konten* dan *kasir belanja* menjadi nol! Pembeli belanja tanpa merasa sedang dipaksa beli.
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Praktik Kelas -->
+    <div class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Praktik Kelas</span>
+          <h2 class="slide-title">Diskusi Kelompok: Membedah Model Bisnis Startup Populer</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 10/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="card" style="background: #f8fafc; border: 2px dashed #94a3b8; padding: 22px;">
+          <h3 style="color: var(--primary); font-size: 17px; margin-bottom: 8px;">
+            📌 Latihan Analisis Model Bisnis Kelas (Waktu: 5 Menit)
+          </h3>
+          <p style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 14px;">
+            Setiap kelompok menganalisis satu aplikasi berikut. Tentukan: (1) Model Pelaku Pasarnya, (2) Dari mana sumber pendapatan utamanya, dan (3) Siapa target pasarnya?
+          </p>
+          <div class="grid-3">
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok 1: Sayurbox</strong><br>
+              Aplikasi pesan antar sayur segar langsung dari petani ke rumah warga perkotaan.
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok 2: Halodoc</strong><br>
+              Aplikasi konsultasi dokter via chat video dan tebus obat langsung dari apotek terdekat.
+            </div>
+            <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+              <strong>Kelompok 3: Ralali.com</strong><br>
+              Portal grosir online pengadaan bahan baku restoran, mesin pabrik, dan alat kantor.
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Kesimpulan & Glosarium -->
+    <div class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-tag">Kesimpulan & Glosarium</span>
+          <h2 class="slide-title">Rangkuman Pertemuan 02 & Glosarium Istilah Kunci</h2>
+        </div>
+        <span class="slide-meta">Pertemuan 02 - Taksonomi & Model Bisnis E-Business • Slide 11/12</span>
+      </div>
+      <div class="content-body">
+        
+        <div class="grid-2">
+          <div class="card success">
+            <div class="card-title">Takeaway Pembelajaran Pertemuan 02</div>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li>Model bisnis e-bisnis diklasifikasikan berdasarkan <strong>siapa yang menjual dan siapa yang membeli (B2B, B2C, C2C, C2B, B2G)</strong>.</li>
+              <li>B2B mengutamakan volume grosir dan kepatuhan kontrak, sedangkan B2C mengutamakan kemudahan antarmuka dan kecepatan checkout.</li>
+              <li>Platform digital memonetisasi sistem melalui <strong>Komisi, Berlangganan (SaaS), Freemium, Iklan, dan Listing Fee</strong>.</li>
+              <li>Social Commerce telah mengubah lanskap perdagangan dari pencarian pasif menjadi penemuan konten aktif (*Discovery Commerce*).</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="card-title">📖 Glosarium Istilah Penting Dosen</div>
+            <ul class="bullet-list" style="font-size: 12px;">
+              <li><strong>Take Rate:</strong> Persentase komisi yang dipotong platform dari total nilai barang yang terjual.</li>
+              <li><strong>SaaS:</strong> Software as a Service, aplikasi yang disewa secara bulanan lewat cloud.</li>
+              <li><strong>Freemium:</strong> Model gratis untuk fitur dasar, namun berbayar untuk fitur canggih.</li>
+              <li><strong>O2O:</strong> Online to Offline, memadukan pesanan web dengan pengambilan di toko fisik.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+          <h3 style="color: var(--primary); font-size: 18px;">Pekan Depan: Pertemuan 03 - Ruang Lingkup E-Bisnis (Prinsip 4W) & Spektrum Value Chain</h3>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTROLLER -->
+  <div class="controller">
+    <button class="btn-nav" id="prevBtn" onclick="prevSlide()">&#8592; Sebelumnya</button>
+    <div class="slide-counter">
+      SLIDE <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">11</span> <button class="btn-nav" style="margin-left: 15px; padding: 4px 10px; font-size: 12px;" onclick="toggleFullScreen()">⛶ Layar Penuh</button>
+    </div>
+    <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Berikutnya &#8594;</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 11;
+
+    function showSlide(index) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${index}"]`);
+      if (activeSlide) {
+        activeSlide.classList.add('active');
+        document.getElementById('currentSlideNum').innerText = index;
+        document.getElementById('progressBar').style.width = ((index / totalSlides) * 100) + '%';
+        activeSlide.scrollTop = 0;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    document.getElementById('totalSlidesNum').innerText = totalSlides;
+  </script>
+</body>
+</html>
